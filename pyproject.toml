@@ -34,7 +34,7 @@ classifiers     = [
 
 [tool.setuptools]
 packages        = ["qps_timeseries"]
-package-dir     = { g3w-admin-ps-timeseries = "qps_timeseries" }
+package-dir     = { qps_timeseries = "qps_timeseries" }
 
 [tool.setuptools.dynamic]
 dependencies    = { file = ["requirements.txt"] }

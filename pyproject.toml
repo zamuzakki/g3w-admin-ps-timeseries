@@ -33,8 +33,8 @@ classifiers     = [
 "Bug Tracker"   = "https://github.com/g3w-suite/g3w-admin-ps-timeseries/issues"
 
 [tool.setuptools]
-packages        = ["qps_timeseries"]
-package-dir     = { g3w-admin-ps-timeseries = "qps_timeseries" }
+# packages        = ["qps_timeseries"]
+# package-dir     = { g3w-admin-ps-timeseries = "qps_timeseries" }
 
 [tool.setuptools.dynamic]
 dependencies    = { file = ["requirements.txt"] }

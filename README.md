@@ -2,7 +2,7 @@
 
 Porting on G3W-SUITE of QGIS desktop plugin https://plugins.qgis.org/plugins/pstimeseries/
 
-![QGIS desktop](doc/images/screenshot.png)
+![QGIS desktop](media/screenshot.png)
 
 ## Installation
 
@@ -45,3 +45,7 @@ export DEB_PYTHON_INSTALL_LAYOUT=deb_system
 # And then install again the module
 pip3 install ...
 ```
+
+## Sample data
+
+The [qps_timeseries.qgs](media/projects/qps_timeseries.qgs) project is available in the [media](media/) folder (EPSG:4326).

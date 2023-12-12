@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.http.response import JsonResponse
 
-class SomeProtectedView(View):
+class QPSTimeseriesPlot(View):
 
     def get(self, *args, **kwargs):
         ## Fake Data

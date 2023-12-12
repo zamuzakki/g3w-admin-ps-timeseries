@@ -8,6 +8,16 @@
     $script('https://cdn.plot.ly/plotly-1.52.2.min.js');
   }
 
+  document.head.insertAdjacentHTML(
+    'beforeend',
+    `<style>
+      .js-plotly-plot .modebar-container                           { top: unset !important; bottom: 0; left: 0; text-align: center; }
+      .js-plotly-plot a.modebar-btn                                { font-size: 30px !important; }
+      .js-plotly-plot .plotly .modebar                             { left: 0; }
+      .js-plotly-plot .plotly .modebar .modebar-group:last-of-type { position: fixed; left: 0; top: 8px; }
+    </style>`,
+  );
+
   /**
    * Match strings with the following pattern:
    * - starts with the letter "D"
@@ -35,7 +45,7 @@
                 hint: 'PS Time Series',
                 cbk: (layer, feature) => {
                   const chart = new (Vue.extend({
-                    template: `<section class="qps-timeseries"><bar-loader :loading="loading"/><div ref="chart" style="margin-top: 10px;"></div></section>`,
+                    template: `<section class="qps-timeseries"><bar-loader :loading="loading"/><div ref="chart" style="margin: 10px auto 30px auto;"></div></section>`,
                     data:     () => ({ loading: true }), // show loading bar while getting data from server
                   }))();
                   GUI

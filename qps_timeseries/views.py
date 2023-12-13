@@ -109,6 +109,7 @@ class QPSTimeseriesPlot(View):
                 },
                 'text': TITLE,
               },
+              'hovermode': 'closest',
             },
             'config': {
               'displayModeBar': True,

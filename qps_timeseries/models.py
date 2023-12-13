@@ -78,7 +78,7 @@ class QpsTimeseriesLayer(models.Model):
 
     qps_timeseries_project = models.ForeignKey(QpsTimeseriesProject, on_delete=models.CASCADE)
     layer = models.ForeignKey(Layer, on_delete=models.CASCADE,
-                                  help_text=_('Select vector project layers to use for reporting: '
+                                  help_text=_('Select vector project layers to use for PS Timeseries: '
                                               'only follow geometry types are allowed: ' +
                                               ', '.join(GEO_TYPE_VECTOR_LAYER_ALLOWED))
                               )
@@ -92,9 +92,9 @@ class QpsTimeseriesLayer(models.Model):
     max_y = models.FloatField('Max Y', null=False, blank=False)
 
     # Replica
-    replica_up = models.BooleanField('Replica update', null=False, blank=False, default=False)
-    replica_down = models.BooleanField('Replica down', null=False, blank=False, default=False)
-    replica_dist = models.FloatField('Replica distance', null=False, blank=False, default=0.0)
+    replica_up = models.BooleanField('Up', null=False, blank=False, default=False)
+    replica_down = models.BooleanField('Down', null=False, blank=False, default=False)
+    replica_dist = models.FloatField('Distance [mm]', null=False, blank=False, default=0.0)
 
     # Chart options
     h_grid = models.BooleanField('Horizontal grid', null=False, blank=False, default=False)
@@ -106,15 +106,15 @@ class QpsTimeseriesLayer(models.Model):
     detrending = models.BooleanField('Detrending', null=False, blank=False, default=False)
 
     # Chart axis label
-    x_axis_label = models.CharField('X axis label', null=False, blank=False, max_length=255)
-    y_axis_label = models.CharField('Y axis label', null=False, blank=False, max_length=255)
+    x_axis_label = models.CharField('X axis label', null=False, blank=False, max_length=255, default='[Date]')
+    y_axis_label = models.CharField('Y axis label', null=False, blank=False, max_length=255, default='[mm]')
 
     # Chart title
-    title_part_1 = models.CharField('Title part 1', null=False, blank=False, max_length=255)
+    title_part_1 = models.CharField('Title part 1', null=False, blank=False, max_length=255, default='coher.:')
     title_part_1_field = models.CharField('Title part 1 field', null=False, blank=False, max_length=255, choices=[])
-    title_part_2 = models.CharField('Title part 2', null=False, blank=False, max_length=255)
+    title_part_2 = models.CharField('Title part 2', null=False, blank=False, max_length=255, default='vel..:')
     title_part_2_field = models.CharField('Title part 2 field', null=False, blank=False, max_length=255, choices=[])
-    title_part_3 = models.CharField('Title part 3', null=False, blank=False, max_length=255)
+    title_part_3 = models.CharField('Title part 3', null=False, blank=False, max_length=255, default='v_stdev.:')
     title_part_3_field = models.CharField('Title part 3 field', null=False, blank=False, max_length=255, choices=[])
 
 

@@ -99,7 +99,7 @@ class QpsTimeseriesLayersListView(ListView):
         ctx = super().get_context_data(**kwargs)
 
         # Add QpsProject instance pk
-        ctx['qps_timeseries_project_id'] = self.kwargs['pk']
+        ctx['qps_timeseries_project_id'] = self.kwargs['qps_prj_pk']
 
         return ctx
 

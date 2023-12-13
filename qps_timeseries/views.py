@@ -115,6 +115,6 @@ class QPSTimeseriesPlot(View):
               'modeBarButtonsToRemove': ['select2d', 'lasso2d'],
               'editable': True,
               'responsive': True,
-              'scrollZoom': True
+              'scrollZoom': True,
             },
         })

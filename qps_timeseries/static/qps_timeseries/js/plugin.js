@@ -19,6 +19,24 @@
   );
 
   /**
+   * Custom modebar button
+   * 
+   * @see https://plotly.com/javascript/configuration-options/#add-buttons-to-modebar
+   */
+  const btn = (name, color, data, ids) => ids.length ? ({
+    name,
+    icon: {
+      svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -4 39 9" style="fill:${ color }; stroke:${ color }; stroke-width: 2; opacity:${ 'markers' == data[ids[0]].mode ? 0.5 : 1 }"><path d="M5,0h30M24,4h-8v-8h8v8Z"/></svg>`
+    },
+    click(p, e) {
+      const btn = e.target.closest('.modebar-btn svg');
+      const off = btn.style.opacity < 1;
+      Plotly.restyle(p, { mode: off ? 'scatter' : 'markers' }, ids);
+      btn.style.opacity = off ? 1 : .5;
+    }
+  }) : undefined;
+
+  /**
    * Match strings with the following pattern:
    * - starts with the letter "D"
    * - followed by 8 digits representing the date in the format "YYYYMMDD"
@@ -55,7 +73,11 @@
                     })
                     .on("shown.bs.modal", async function() {
                       const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
-                      Plotly.newPlot(chart.$refs.chart, data, layout, config);
+                      Plotly.newPlot(chart.$refs.chart, data, layout, {...config, modeBarButtonsToAdd: [
+                        btn('Toggle scatter lines', 'black', data, [0]),
+                        btn('Toggle replica lines', 'blue', data, data.flatMap((d, i) => (i && 'lines' !== d.mode) ? i : [])), // ie. 'scatter' or 'markers' mode
+                      ].filter(Boolean)
+                      });
                       chart.loading = false;
                     });
                 }

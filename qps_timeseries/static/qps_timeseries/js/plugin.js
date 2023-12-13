@@ -74,9 +74,17 @@
                     .on("shown.bs.modal", async function() {
                       const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
                       Plotly.newPlot(chart.$refs.chart, data, layout, {...config, modeBarButtonsToAdd: [
+                        initConfig?.user?.admin_url && {
+                          name: 'Edit in admin',
+                          icon: Plotly.Icons.pencil,
+                          direction: 'up',
+                          click(gd) {
+                            window.open(initConfig.user.admin_url, '_blank');
+                          },
+                        },
                         btn('Toggle scatter lines', 'black', data, [0]),
                         btn('Toggle replica lines', 'blue', data, data.flatMap((d, i) => (i && 'lines' !== d.mode) ? i : [])), // ie. 'scatter' or 'markers' mode
-                      ].filter(Boolean)
+                      ].filter(Boolean),
                       });
                       chart.loading = false;
                     });

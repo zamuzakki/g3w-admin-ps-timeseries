@@ -117,5 +117,6 @@ class QPSTimeseriesPlot(View):
               'editable': True,
               'responsive': True,
               'scrollZoom': True,
+              'toImageButtonOptions': { 'filename': 'qps-timeseries' },
             },
         })

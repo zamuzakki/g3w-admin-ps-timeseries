@@ -85,21 +85,31 @@ class QPSTimeseriesPlot(View):
             'layout': {
               'xaxis': {
                 'title': '[Date]',
-                'range': [ '2013-07-04 22:23:00', '2014-01-04 22:23:00' ],
+                'autorange': True,
                 'linecolor': 'black',
                 'mirror': True,
                 'ticks': 'outside',
                 'tickcolor': '#000',
                 'zeroline': False,
+                'rangeslider': {
+                    # 'range': [ '2013-07-04 22:23:00', '2014-01-04 22:23:00' ],
+                    # 'range': [ '2013', '2014' ],
+                    # 'range': [ ],
+                  'thickness': 0.1,
+                },
+                'type': 'date'
               },
               'yaxis': {
                 'title': '[mm]',
-                'range': [0 - DELTA, 8 + DELTA],
+                'autorange': True,
+                # 'range': [0 - DELTA, 8 + DELTA],
                 'linecolor': 'black',
                 'mirror': True,
                 'ticks': 'outside',
                 'tickcolor': '#000',
                 'zeroline': False,
+                'rangeslider': { },
+                'type': 'linear',
               },
               'title': {
                 "font": {

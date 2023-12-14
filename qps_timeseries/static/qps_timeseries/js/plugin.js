@@ -22,6 +22,8 @@
       .qps-timeseries .modebar-group:first-of-type        { order: 2; }
       .qps-timeseries .modebar-group:nth-last-child(-n+2) { order: 1; margin-left: auto; }
       .qps-timeseries .modebar-group:last-of-type         { position: fixed; left: 0; top: 8px; }
+      .qps-timeseries .rangeslider-rangeplot.xy           { opacity: .15; }
+      .qps-timeseries :is(.rangeslider-handle-min, .rangeslider-handle-max) { height: 21px; width: 8px; translate: -2px -5px; fill: yellow; shape-rendering: optimizespeed; }
       @media (max-width: 992px) {
         .qps-timeseries .modal-dialog  { width: 100%; height: 100%; margin: 0; padding: 0; }
         .qps-timeseries .modal-content { height: auto; min-height: 100%; border-radius: 0; }

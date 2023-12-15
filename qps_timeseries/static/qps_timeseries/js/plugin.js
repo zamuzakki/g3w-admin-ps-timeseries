@@ -106,6 +106,17 @@
                                 Plotly.update(chart.$refs.chart, { name: `Replica -${delta}`, x: [data[0].x], y: [data[0].y.map(y => y-delta)], visible: true }, {}, [2]);
                               },
                             },
+                            {
+                              name: 'Toggle grid lines',
+                              icon: {
+                                svg: `<svg xmlns="http://www.w3.org/2000/svg" fill="#c6c6c6" viewBox="0 0 256 256"><style>svg{fill:#c6c6c6}svg:hover{fill:#7b7b7b}.x>path:nth-of-type(1),.y>path:nth-of-type(2),svg:not(.y.x)>path:nth-of-type(3){display: none}</style><path d="M74 246c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/><path d="M241 79H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10z"/><path d="M241 20H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 226H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm-226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/></svg>`,
+                              },
+                              click(p, e) {
+                                let x = layout.xaxis.showgrid; 
+                                let y = layout.yaxis.showgrid;
+                                Plotly.relayout(chart.$refs.chart, { 'xaxis.showgrid': !x || (!y && y), 'yaxis.showgrid': (x && y) || (!x && !y) });
+                              },
+                            },
                             btn('Toggle scatter lines', 'black', data, [0]),
                             btn('Toggle replica lines', 'blue', data, [1, 2]),
                           ], [{
@@ -130,10 +141,14 @@
                           }],
                         ],
                       });
-                      // conditionally show replica lines toggler
                       chart.$refs.chart.on('plotly_afterplot', function() {
+                        // show replica lines toggler
                         document.querySelector(`.${pid} .modebar-group:nth-last-child(-n+4) .modebar-btn:last-of-type`).hidden = !data[1].visible && !data[2].visible;
-                      });
+                        // cycle grid lines toggler
+                        const svg = document.querySelector(`.${pid} .modebar-group:nth-last-child(-n+4) .modebar-btn:nth-of-type(2) svg`)
+                        svg.classList.toggle('x',!layout.xaxis.showgrid);
+                        svg.classList.toggle('y',!layout.yaxis.showgrid);
+                      })
                       chart.loading = false;
                     });
                 }

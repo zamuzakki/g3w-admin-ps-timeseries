@@ -7,10 +7,15 @@ class QPSTimeseriesPlot(View):
 
     def get(self, *args, **kwargs):
 
-        DELTA = 5
+        DELTA_U = 5
+        DELTA_D = 0
+
         TITLE = 'PS Time Series Viewer<br><sub>coher.: <pid> vel.: <pid> v_stdev.: <pid></sub>'
         X = ['2013-08-04 22:23:00', '2013-09-04 22:23:00', '2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00']
         Y = [4, 1, 7, 1, 4]
+
+        XGRID = True
+        YGRID = True
 
         ## WebGL optimization
         ## https://plotly.com/javascript/webgl-vs-svg/
@@ -35,12 +40,12 @@ class QPSTimeseriesPlot(View):
               },
               ## TRACE1 = replica + delta
               {
-                'visible': False if 0 == DELTA else True,
-                'x': [] if 0 == DELTA else X,
-                'y': [] if 0 == DELTA else [y + DELTA for y in Y],
+                'visible': False if 0 == DELTA_U else True,
+                'x': [] if 0 == DELTA_U else X,
+                'y': [] if 0 == DELTA_U else [y + DELTA_U for y in Y],
                 'mode': 'scatter',
                 'type': TYPE,
-                'name': 'Replica +' + str(DELTA),
+                'name': 'Replica +' + str(DELTA_U),
                 'marker': {
                   'size': 8,
                   'color': 'blue',
@@ -49,12 +54,12 @@ class QPSTimeseriesPlot(View):
               },
               ## TRACE2 = replica - delta
               {
-                'visible': False if 0 == DELTA else True,
-                'x': [] if 0 == DELTA else X,
-                'y': [] if 0 == DELTA else [y - DELTA for y in Y],
+                'visible': False if 0 == DELTA_D else True,
+                'x': [] if 0 == DELTA_D else X,
+                'y': [] if 0 == DELTA_D else [y - DELTA_D for y in Y],
                 'mode': 'scatter',
                 'type': TYPE,
-                'name': 'Replica -' + str(DELTA),
+                'name': 'Replica -' + str(DELTA_D),
                 'marker': {
                   'size': 8,
                   'color': 'blue',
@@ -103,6 +108,7 @@ class QPSTimeseriesPlot(View):
             ],
             'layout': {
               'xaxis': {
+                'showgrid': XGRID,
                 'title': '[Date]',
                 'autorange': True,
                 'linecolor': 'black',
@@ -119,6 +125,7 @@ class QPSTimeseriesPlot(View):
                 'type': 'date'
               },
               'yaxis': {
+                'showgrid': YGRID,
                 'title': '[mm]',
                 'autorange': True,
                 # 'range': [0 - DELTA, 8 + DELTA],

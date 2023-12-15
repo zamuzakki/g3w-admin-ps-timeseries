@@ -8,19 +8,22 @@ class QPSTimeseriesPlot(View):
     def get(self, *args, **kwargs):
         DELTA = 5
         TITLE = 'PS Time Series Viewer<br><sub>coher.: <pid> vel.: <pid> v_stdev.: <pid></sub>'
+        X = [
+            '2013-08-04 22:23:00',
+            '2013-09-04 22:23:00',
+            '2013-10-04 22:23:00',
+            '2013-11-04 22:23:00',
+            '2013-12-04 22:23:00',
+        ]
+        Y = [4, 1, 7, 1, 4]
         ## Fake Data
         ## https://plotly.com/javascript/
         return JsonResponse({
             'data':  [
+              ## SCATTER
               {
-                'x': [
-                  '2013-08-04 22:23:00',
-                  '2013-09-04 22:23:00',
-                  '2013-10-04 22:23:00',
-                  '2013-11-04 22:23:00',
-                  '2013-12-04 22:23:00',
-                ],
-                'y': [4, 1, 7, 1, 4],
+                'x': X,
+                'y': Y,
                 'mode': 'markers',
                 'type': 'scatter',
                 'name': 'Scatter',
@@ -30,15 +33,11 @@ class QPSTimeseriesPlot(View):
                   'symbol': 'square',
                 },
               },
+              ## REPLICA (+ DELTA)
               {
-                'x': [
-                  '2013-08-04 22:23:00',
-                  '2013-09-04 22:23:00',
-                  '2013-10-04 22:23:00',
-                  '2013-11-04 22:23:00',
-                  '2013-12-04 22:23:00',
-                ],
-                'y': [DELTA + 4, DELTA + 1, DELTA + 7, DELTA + 1, DELTA + 4],
+                'visible': False if 0 == DELTA else True,
+                'x': [] if 0 == DELTA else X,
+                'y': [] if 0 == DELTA else [y + DELTA for y in Y],
                 'mode': 'scatter',
                 'type': 'scatter',
                 'name': 'Replica +' + str(DELTA),
@@ -48,15 +47,11 @@ class QPSTimeseriesPlot(View):
                   'symbol': 'square',
                 },
               },
+              ## REPLICA (- DELTA)
               {
-                'x': [
-                  '2013-08-04 22:23:00',
-                  '2013-09-04 22:23:00',
-                  '2013-10-04 22:23:00',
-                  '2013-11-04 22:23:00',
-                  '2013-12-04 22:23:00',
-                ],
-                'y': [4 - DELTA, 1 - DELTA, 7 - DELTA, 1 - DELTA, 4 - DELTA],
+                'visible': False if 0 == DELTA else True,
+                'x': [] if 0 == DELTA else X,
+                'y': [] if 0 == DELTA else [y - DELTA for y in Y],
                 'mode': 'scatter',
                 'type': 'scatter',
                 'name': 'Replica -' + str(DELTA),
@@ -66,6 +61,7 @@ class QPSTimeseriesPlot(View):
                   'symbol': 'square',
                 },
               },
+              ## TREND LINE
               {
                 'x': [
                   '2013-08-04 22:23:00',

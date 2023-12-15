@@ -74,7 +74,7 @@ class QPSTimeseriesPlot(View):
                 'mode': 'lines',
                 'type': TYPE,
                 'name': 'Lin Trend',
-                'marker': {
+                'line': {
                   'color': 'red',
                 },
               },
@@ -91,13 +91,12 @@ class QPSTimeseriesPlot(View):
                 'mode': 'lines',
                 'type': 'scatter',
                 'name': 'Poly Trend',
-                'marker': {
-                  'color': 'green'
-                },
                 # https://plotly.com/javascript/reference/scatter/#scatter-line-shape
                 # https://plotly.com/javascript/reference/scattergl/#scattergl-line-shape
                 'line': {
                   'shape': 'spline',
+                  'smoothing': 1.3,
+                  'color': 'green'
                 },
               },
             ],

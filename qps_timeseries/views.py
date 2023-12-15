@@ -29,6 +29,9 @@ from .forms import (
     QpsTimeseriesProjectForm,
     QpsTimeseriesLayerForm
 )
+from .config import QPS_TIMESERIES_API_LAYERINFO
+
+import json
 
 class QpsTimeseriesProjectListView(ListView):
     """List qps_timeseries projects view."""
@@ -106,6 +109,15 @@ class QpsTimeseriesLayersListView(ListView):
 
 class QpsTimeseriesLayerMixinView(object):
 
+    def get_context_data(self, **kwargs):
+        ctx = ctx = super().get_context_data(**kwargs)
+
+        ctx['layerinfo_api_url_base'] = f'qps_timeseries/{QPS_TIMESERIES_API_LAYERINFO}/'
+
+        ctx['update'] = False
+
+        return ctx
+
     def get_form_kwargs(self):
         fkwargs = super().get_form_kwargs()
 
@@ -113,6 +125,10 @@ class QpsTimeseriesLayerMixinView(object):
         fkwargs['qps_timeseries_project'] = QpsTimeseriesProject.objects.get(pk=self.kwargs['qps_prj_pk'])
 
         return fkwargs
+
+    def get_success_url(self):
+
+        return reverse_lazy('qpstimeseries-project-layer-list', args=[self.kwargs['qps_prj_pk']])
 
 
 class QpsTimeseriesLayerAddView(QpsTimeseriesLayerMixinView, G3WRequestViewMixin, CreateView):
@@ -140,6 +156,23 @@ class QpsTimeseriesLayerUpdateView(QpsTimeseriesLayerMixinView, G3WRequestViewMi
                             (QpsTimeseriesLayer, 'pk', 'pk'), return_403=True))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        # Add update status
+        ctx['update'] = True
+
+        # Add initial value
+        ctx['initial'] = json.dumps({
+            'id_min_date': str(self.object.min_date),
+            'id_max_date': str(self.object.min_date),
+            'id_title_part_1_field': self.object.title_part_1_field,
+            'id_title_part_2_field': self.object.title_part_2_field,
+            'id_title_part_3_field': self.object.title_part_3_field,
+        })
+
+        return ctx
 
 
 class QpsTimeseriesLayerDeleteView(QpsTimeseriesLayerMixinView, G3WAjaxDeleteViewMixin, SingleObjectMixin, View):

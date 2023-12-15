@@ -8,11 +8,11 @@ sitetrees = (
       # Then define items and their children with `item` function.
       item('PS TIMESERIES', '#', type_header=True),
       item('Projects', '#', icon_css_class='fa fa-users', children=[
-          #item('Aggiungi segnalazione', 'qpstimeseries-project-add', url_as_pattern=True, icon_css_class='fa fa-plus',
-          #     access_by_perms=['qpstimeseries.add_simplerepoproject']),
+          item('Aggiungi progetto', 'qpstimeseries-project-add', url_as_pattern=True, icon_css_class='fa fa-plus',
+               access_by_perms=['qps_timeseries.add_qpstimeseriesproject']),
           item('Lista progetti', 'qpstimeseries-project-list', url_as_pattern=True, icon_css_class='fa fa-list'),
-          #item('Agg. progetto {{ object.project.title }}', 'qpstimeseries-project-update object.pk', url_as_pattern=True,
-          #     icon_css_class='fa fa-edit', in_menu=False, alias='simplerepoproject-update'),
+          item('Agg. progetto {{ object.project.title }}', 'qpstimeseries-project-update object.pk', url_as_pattern=True,
+               icon_css_class='fa fa-edit', in_menu=False, alias='qpstimeseries-project-update'),
       ]),
   ]),
 
@@ -20,11 +20,11 @@ sitetrees = (
       # Then define items and their children with `item` function.
       item('PS TIMESERIES', '#', type_header=True),
       item('Projects', '#', icon_css_class='fa fa-users', children=[
-          #item('Add reporting', 'qpstimeseries-project-add', url_as_pattern=True, icon_css_class='fa fa-plus',
-          #     access_by_perms=['qpstimeseries.add_simplerepoproject']),
+          item('Add project', 'qpstimeseries-project-add', url_as_pattern=True, icon_css_class='fa fa-plus',
+               access_by_perms=['qps_timeseries.add_qpstimeseriesproject']),
           item('Projects list', 'qpstimeseries-project-list', url_as_pattern=True, icon_css_class='fa fa-list'),
-          #item('Update project {{ object.project.title }}', 'qpstimeseries-project-update object.pk', url_as_pattern=True,
-          #     icon_css_class='fa fa-edit', in_menu=False, alias='simplerepoproject-update'),
+          item('Update project {{ object.project.title }}', 'qpstimeseries-project-update object.pk', url_as_pattern=True,
+               icon_css_class='fa fa-edit', in_menu=False, alias='qpstimeseries-project-update'),
       ]),
   ]),
 )

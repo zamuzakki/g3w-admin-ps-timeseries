@@ -46,7 +46,7 @@
                         <td>{{ object.project }}</td>
                         <td>
                             {% if object.layers %}
-
+                                {{ object.layers|length }} {% trans 'layers' %}
                             {%  else %}
                                 <span style="color: red;">
                                 <span class="fa fa-exclamation-triangle"></span>

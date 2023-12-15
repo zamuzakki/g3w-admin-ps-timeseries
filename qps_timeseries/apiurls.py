@@ -13,7 +13,9 @@ __license__ = 'MPL 2.0'
 
 from django.urls import path
 from .api.views import QpsTimeseriesLayerinfoApiView
+from .config import QPS_TIMESERIES_API_LAYERINFO
 
 urlpatterns = [
-    path('api/layerinfo/<int:pk>/', QpsTimeseriesLayerinfoApiView.as_view(), name='qpstimeseries-api-layerinfo'),
+    path(f'{QPS_TIMESERIES_API_LAYERINFO}/<int:pk>/', QpsTimeseriesLayerinfoApiView.as_view(),
+         name='qpstimeseries-api-layerinfo'),
 ]

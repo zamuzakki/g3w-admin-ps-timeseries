@@ -18,6 +18,7 @@ from core.utils.qgisapi import get_qgis_layer
 from qdjango.models import Layer
 from qgis.core import QgsFeature
 from qgis.PyQt.QtCore import QDate, QRegExp, Qt
+from .permissions import GetLayerInfoPermission
 
 
 class QpsTimeseriesLayerinfoApiView(G3WAPIView):
@@ -26,7 +27,9 @@ class QpsTimeseriesLayerinfoApiView(G3WAPIView):
     """
 
     # Todo: add permisisons classes
-    permission_classes = ()
+    permission_classes = (
+        GetLayerInfoPermission,
+    )
 
     def get(self, request, *args, **kwargs):
 
@@ -48,7 +51,7 @@ class QpsTimeseriesLayerinfoApiView(G3WAPIView):
         attrs = qfeature.attributes()
 
         x, y = [], []  # lists containg x,y values
-        infoFields = {}  # hold the index->name of the fields containing info to be displayed
+        infoFields = []  # list of the fields containing info to be displayed
 
         ps_source = qlayer.source()
         ps_fields = qlayer.dataProvider().fields()
@@ -62,14 +65,14 @@ class QpsTimeseriesLayerinfoApiView(G3WAPIView):
         for idx, fld in enumerate(ps_fields):
             if QRegExp("D\\d{8}", Qt.CaseInsensitive).indexIn(fld.name()) < 0:
                 # info fields are all except those containing dates
-                infoFields[idx] = fld.name()
+                infoFields.append(fld.name())
             else:
                 x.append(QDate.fromString(fld.name()[1:], "yyyyMMdd").toPyDate())
                 y.append(float(attrs[idx]))
 
         self.results.update({
             'x': x,
-            'y': x,
+            'y': y,
             'fields': infoFields
         })
 

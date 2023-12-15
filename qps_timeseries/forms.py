@@ -11,7 +11,7 @@ __date__ = '2023-12-04'
 __copyright__ = 'Copyright 2015 - 2023, Gis3w'
 __license__ = 'MPL 2.0'
 
-from django.forms import ModelForm
+from django.forms import ModelForm, CharField, Select, HiddenInput
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import (
@@ -70,12 +70,19 @@ class QpsTimeseriesProjectForm(G3WFormMixin, G3WRequestFormMixin, ModelForm):
 
 class QpsTimeseriesLayerForm(G3WFormMixin, G3WRequestFormMixin, ModelForm):
 
+    title_part_1_field = CharField(widget=Select())
+    title_part_2_field = CharField(widget=Select())
+    title_part_3_field = CharField(widget=Select())
+    qps_timeseries_project = CharField(widget=HiddenInput())
+
     def __init__(self, *args, **kwargs):
 
         self.qps_timeseries_project_instance = kwargs['qps_timeseries_project']
         del(kwargs['qps_timeseries_project'])
 
         super().__init__(*args, **kwargs)
+
+        self.initial['qps_timeseries_project'] = self.qps_timeseries_project_instance.pk
 
         # Change layer queryset
         self.fields['layer'].queryset = self.qps_timeseries_project_instance.project.layer_set.all()
@@ -94,8 +101,9 @@ class QpsTimeseriesLayerForm(G3WFormMixin, G3WRequestFormMixin, ModelForm):
                                                 css_class='box-header with-border'
                                             ),
                                             Div(
+                                                'qps_timeseries_project',
                                                 Field('layer', css_class='select2'),
-                                                # Field('note', css_class='wys5'),
+                                                Field('note', css_class='wys5'),
                                                 css_class='box-body',
                                             ),
                                             css_class='box box-success'
@@ -166,7 +174,7 @@ class QpsTimeseriesLayerForm(G3WFormMixin, G3WRequestFormMixin, ModelForm):
                                                             css_class='col-md-6'
                                                         ),
                                                         Div(
-                                                            Field('line_trend', css_class='checkbox'),
+                                                            Field('lin_trend', css_class='checkbox'),
                                                             Field('poly_trend', css_class='checkbox'),
                                                             Field('detrending', css_class='checkbox'),
                                                             css_class='col-md-6'
@@ -232,6 +240,9 @@ class QpsTimeseriesLayerForm(G3WFormMixin, G3WRequestFormMixin, ModelForm):
                                     css_class='row'
                                 )
                             )
+
+    def clean_qps_timeseries_project(self):
+        return self.qps_timeseries_project_instance
 
     class Meta:
         model = QpsTimeseriesLayer

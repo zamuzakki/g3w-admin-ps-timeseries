@@ -31,22 +31,16 @@
                 {% for object in object_list %}
                     <tr id="qps_timeseries_layer_{{ object.pk }}">
                         <td>
-                            {% comment %}
+
                             <span class="col-xs-4 icon">
-                                <a href="{% url 'qpstimesiries-layer-update' object.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Edit' %}" ><i class="ion ion-edit"></i></a>
+                                <a href="{% url 'qpstimeseries-project-layer-update' qps_timeseries_project_id object.pk %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Edit' %}" ><i class="ion ion-edit"></i></a>
                             </span>
 
                             <span class="col-xs-4 icon">
-                                <a href="#" data-toggle="tooltip" data-placement="top" title="{% trans 'Delete' %}"  data-widget-type="deleteItem" data-delete-url="{% url 'qpstimeseries-project-delete' object.pk %}" data-item-selector="#qps_timeseries_project_{{ object.pk }}"><i class="ion ion-trash-b"></i></a>
+                                <a href="#" data-toggle="tooltip" data-placement="top" title="{% trans 'Delete' %}"  data-widget-type="deleteItem" data-delete-url="{% url 'qpstimeseries-project-layer-delete' qps_timeseries_project_id object.pk %}" data-item-selector="#qps_timeseries_layer_{{ object.pk }}"><i class="ion ion-trash-b"></i></a>
                             </span>
-
-                            <span class="col-xs-4 icon">
-                                <a href="{% url 'qpstimesiries-layer-update' object.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Reporting Vector layer' %}" ><i class="ion ion-android-list"></i></a>
-                            </span>
-                            {% endcomment %}
-
                         </td>
-                        <td>object.layer</td>
+                        <td>{{ object.layer }}</td>
                         <td>{{ object.note|safe }}</td>
                     </tr>
                 {% endfor %}

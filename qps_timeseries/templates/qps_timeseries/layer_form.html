@@ -5,6 +5,108 @@
 {% load i18n %}
 
 
+{% block custom_js_links_page %}
+<script>
+    /* Set for widget initial atomic capabilities */
+    ga.QpsTimeseries = {
+
+
+        init: function (){
+
+            // Hook layer selection
+            this.layer_select = $("#qps-timeseries-layer-form").find('#id_layer');
+            this.min_date_input = $("#qps-timeseries-layer-form").find('#id_min_date');
+            this.max_date_input = $("#qps-timeseries-layer-form").find('#id_max_date');
+            this.min_y_input = $("#qps-timeseries-layer-form").find('#id_min_y');
+            this.max_y_input = $("#qps-timeseries-layer-form").find('#id_max_y');
+            this.title_1_select = $("#qps-timeseries-layer-form").find('#id_title_part_1_field');
+            this.title_2_select = $("#qps-timeseries-layer-form").find('#id_title_part_2_field');
+            this.title_3_select = $("#qps-timeseries-layer-form").find('#id_title_part_3_field');
+
+            //this.layer_select.on('select2:select', this.populate_form());
+            this.layer_select.on('change', this.populate_form());
+            this.layerinfo_api_url_base = '{{ layerinfo_api_url_base }}';
+            this.layer_select.trigger('change');
+
+            {% if update %}
+            this.update = true;
+            this.initial = {{ initial|safe }};
+            {% else %}
+            this.update = false;
+            {% endif %}
+        },
+
+        /**
+         * Populate form fields with layer data
+         */
+        populate_form: function(){
+
+            var that = this;
+
+            return function(e){
+
+                data = {}
+                data.id = $(this).val()
+
+                /*
+                try {
+                    var data = e.params.data;
+                } catch {
+                    var data = e;
+                }
+
+                 */
+
+                // Exec ajax call
+                if (data.id |= '') {
+                    $.ajax({
+                        method: "get",
+                        url: "/" + that.layerinfo_api_url_base + data.id + "/",
+                        success: function (res) {
+
+                            var start_date = res['x'][0];
+                            var end_date = res['x'][res['x'].length - 1];
+
+
+                            that.min_date_input.val(start_date);
+                            that.min_date_input.datepicker({
+                                'language': 'en',
+                                'startDate': start_date,
+                                'endDate': end_date,
+                            });
+                            that.max_date_input.val(end_date);
+                            that.max_date_input.datepicker({
+                                'language': 'en',
+                                'startDate': start_date,
+                                'endDate': end_date,
+                            });
+                            that.min_y_input.val(res['y'][0]);
+                            that.max_y_input.val(res['y'][res['y'].length - 1]);
+
+                            _.each(res['fields'], function (field) {
+                                var select1 = '';
+                                var select2 = '';
+                                var select3 = '';
+                                if (that.update){
+                                    if (that.initial['id_title_part_1_field'] == field) select1 = "selected=''";
+                                    if (that.initial['id_title_part_2_field'] == field) select2 = "selected=''";
+                                    if (that.initial['id_title_part_3_field'] == field) select3 = "selected=''";
+                                }
+                                that.title_1_select.append($('<option ' + select1 + ' value="' + field + '">' + field + '</option>'));
+                                that.title_2_select.append($('<option ' + select2 + ' value="' + field + '">' + field + '</option>'));
+                                that.title_3_select.append($('<option ' + select3 + ' value="' + field + '">' + field + '</option>'));
+                            })
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+    ga.QpsTimeseries.init();
+</script>
+{%  endblock %}
+
 {% block page_header %}
     <h1>
         {% if form.instance.pk %}
@@ -19,7 +121,7 @@
 
 {% block main_content %}
 
-<form method="post" id="reporting-vector-layer-form">
+<form method="post" id="qps-timeseries-layer-form">
     {% if form.errors %}
         <div class="row">
             <div class="col-md-12">
@@ -33,4 +135,5 @@
     {% crispy form %}
     {% g3wadmin_add_button_form %}
 </form>
+
 {% endblock %}

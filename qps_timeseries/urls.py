@@ -45,7 +45,7 @@ urlpatterns = [
          name='qpstimeseries-project-layer-list'),
     path('projects/<int:qps_prj_pk>/layers/add/', login_required(QpsTimeseriesLayerAddView.as_view()),
          name='qpstimeseries-project-layer-add'),
-    path('projects/<int:qps_prj_pk>/layers/update/<int:pk>/ ', login_required(QpsTimeseriesLayerUpdateView.as_view()),
+    path('projects/<int:qps_prj_pk>/layers/update/<int:pk>/', login_required(QpsTimeseriesLayerUpdateView.as_view()),
          name='qpstimeseries-project-layer-update'),
     path('projects/<int:qps_prj_pk>/layers/delete/<int:pk>/', login_required(QpsTimeseriesLayerDeleteView.as_view()),
          name='qpstimeseries-project-layer-delete'),

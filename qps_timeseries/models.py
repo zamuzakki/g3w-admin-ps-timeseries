@@ -53,6 +53,11 @@ class QpsTimeseriesProject(models.Model):
             #     layer = QpsTimeseriesLayer(simplerepo_project=self)
             #     layer.save()
 
+    @property
+    def layers(self):
+        """Return children layers"""
+        return self.qpstimeserieslayer_set.all()
+
 
 GEO_TYPE_VECTOR_LAYER_ALLOWED = [
     'Point',
@@ -76,7 +81,7 @@ GEO_TYPE_VECTOR_LAYER_ALLOWED = [
 class QpsTimeseriesLayer(models.Model):
     """ Layer where to apply qps_timeseries """
 
-    qps_timeseries_project = models.ForeignKey(QpsTimeseriesProject, on_delete=models.CASCADE)
+    qps_timeseries_project = models.ForeignKey(QpsTimeseriesProject, on_delete=models.CASCADE, unique=True)
     layer = models.ForeignKey(Layer, on_delete=models.CASCADE,
                                   help_text=_('Select vector project layers to use for PS Timeseries: '
                                               'only follow geometry types are allowed: ' +
@@ -111,13 +116,13 @@ class QpsTimeseriesLayer(models.Model):
 
     # Chart title
     title_part_1 = models.CharField('Title part 1', null=False, blank=False, max_length=255, default='coher.:')
-    title_part_1_field = models.CharField('Title part 1 field', null=False, blank=False, max_length=255, choices=[])
+    title_part_1_field = models.CharField('Title part 1 field', null=False, blank=False, max_length=255)
     title_part_2 = models.CharField('Title part 2', null=False, blank=False, max_length=255, default='vel..:')
-    title_part_2_field = models.CharField('Title part 2 field', null=False, blank=False, max_length=255, choices=[])
+    title_part_2_field = models.CharField('Title part 2 field', null=False, blank=False, max_length=255)
     title_part_3 = models.CharField('Title part 3', null=False, blank=False, max_length=255, default='v_stdev.:')
-    title_part_3_field = models.CharField('Title part 3 field', null=False, blank=False, max_length=255, choices=[])
+    title_part_3_field = models.CharField('Title part 3 field', null=False, blank=False, max_length=255)
 
-
+    note = models.TextField('Note', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Qps Timeseries Layer'
@@ -132,6 +137,5 @@ class QpsTimeseriesLayer(models.Model):
                                               ", ".join(GEO_TYPE_VECTOR_LAYER_ALLOWED))})
 
 
-
     def __str__(self):
-        return f"{self.qps_timseries_project} - {self.layer}"
+        return f"{self.qps_timeseries_project} - {self.layer}"

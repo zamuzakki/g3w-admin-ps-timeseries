@@ -80,6 +80,7 @@ class QPSTimeseriesPlot(View):
               },
               ## TRACE5 = trend poly 
               {
+                'visible': 'legendonly',
                 'x': [
                   '2013-08-04 22:23:00',
                   '2013-09-04 22:23:00',

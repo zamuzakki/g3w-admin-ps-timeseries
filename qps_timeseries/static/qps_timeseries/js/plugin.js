@@ -38,7 +38,7 @@
    * 
    * @see https://plotly.com/javascript/configuration-options/#add-buttons-to-modebar
    */
-  const btn = (name, color, data, ids) => ids.length ? ({
+  const btn = (name, color, data, ids) => ({
     name,
     icon: {
       svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -4 39 9" style="fill:${ color }; stroke:${ color }; stroke-width: 2; opacity:${ 'markers' == data[ids[0]].mode ? 0.5 : 1 }"><path d="M5,0h30M24,4h-8v-8h8v8Z"/></svg>`
@@ -49,7 +49,7 @@
       Plotly.restyle(p, { mode: off ? 'scatter' : 'markers' }, ids);
       btn.style.opacity = off ? 1 : .5;
     }
-  }) : undefined;
+  });
 
   /**
    * Match strings with the following pattern:
@@ -93,20 +93,22 @@
                             {
                               name: 'Add replica lines',
                               icon: {
-                                svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="#7b7b7b"><path d="m428 381-197 97a19 19 0 0 1-14 1L20 381c-4-2-4-6 0-8l47-23a19 19 0 0 1 15 0l135 67a19 19 0 0 0 14 0l135-67a19 19 0 0 1 15 0l47 23c4 2 4 6 0 8zm0-137-47-23a19 19 0 0 0-15 0l-135 67a19 19 0 0 1-15 0L83 221a19 19 0 0 0-15 0l-47 23c-4 2-4 5 0 7l197 98a19 19 0 0 0 14 0l197-98c4-2 4-5 0-7zM20 130l197 91a20 20 0 0 0 14 0l197-91c4-2 4-5 0-6L231 33a20 20 0 0 0-14 0L20 124c-4 2-4 5 0 6z"/></svg>`
+                                width: 448,
+                                height: 512,
+                                path: 'm428 381-197 97a19 19 0 0 1-14 1L20 381c-4-2-4-6 0-8l47-23a19 19 0 0 1 15 0l135 67a19 19 0 0 0 14 0l135-67a19 19 0 0 1 15 0l47 23c4 2 4 6 0 8zm0-137-47-23a19 19 0 0 0-15 0l-135 67a19 19 0 0 1-15 0L83 221a19 19 0 0 0-15 0l-47 23c-4 2-4 5 0 7l197 98a19 19 0 0 0 14 0l197-98c4-2 4-5 0-7zM20 130l197 91a20 20 0 0 0 14 0l197-91c4-2 4-5 0-6L231 33a20 20 0 0 0-14 0L20 124c-4 2-4 5 0 6z'
                               },
                               click(p, e) {
                                 const delta = Math.abs(+prompt('Replica delta [mm]'));
                                 if (!delta || !isFinite(delta)) {
                                   return Plotly.update(chart.$refs.chart, { visible: false }, {}, [1, 2]);
                                 }
-                                Plotly.update(chart.$refs.chart, { name: `Replica +${delta}`, y: [data[0].y.map(y => y+delta)], 'marker.color': 'blue', visible: true, mode: 'scatter' }, {}, [1]);
-                                Plotly.update(chart.$refs.chart, { name: `Replica -${delta}`, y: [data[0].y.map(y => y-delta)], 'marker.color': 'blue', visible: true, mode: 'scatter' }, {}, [2]);
+                                Plotly.update(chart.$refs.chart, { name: `Replica +${delta}`, x: [data[0].x], y: [data[0].y.map(y => y+delta)], visible: true }, {}, [1]);
+                                Plotly.update(chart.$refs.chart, { name: `Replica -${delta}`, x: [data[0].x], y: [data[0].y.map(y => y-delta)], visible: true }, {}, [2]);
                               },
                             },
                             btn('Toggle scatter lines', 'black', data, [0]),
-                            btn('Toggle replica lines', 'blue', data, data.flatMap((d, i) => (i && 'lines' !== d.mode) ? i : [])), // ie. 'scatter' or 'markers' mode
-                          ].filter(Boolean), [{
+                            btn('Toggle replica lines', 'blue', data, [1, 2]),
+                          ], [{
                               name: 'Edit in admin',
                               icon: Plotly.Icons.pencil,
                               direction: 'up',
@@ -127,6 +129,10 @@
                             }
                           }],
                         ],
+                      });
+                      // conditionally show replica lines toggler
+                      chart.$refs.chart.on('plotly_afterplot', function() {
+                        document.querySelector(`.${pid} .modebar-group:nth-last-child(-n+4) .modebar-btn:last-of-type`).hidden = !data[1].visible && !data[2].visible;
                       });
                       chart.loading = false;
                     });

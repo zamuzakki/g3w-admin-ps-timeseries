@@ -3,6 +3,7 @@
   const { Plugin }  = g3wsdk.core.plugin;
   const { GUI }     = g3wsdk.gui;
   const { G3W_FID } = g3wsdk.constant;
+  const pid         = 'qps-timeseries';
 
   if (!globalThis.Plotly) {
     $script('https://cdn.plot.ly/plotly-1.52.2.min.js');
@@ -11,24 +12,24 @@
   document.head.insertAdjacentHTML(
     'beforeend',
     `<style>
-      .qps-timeseries .js-plotly-plot                     { margin-bottom: 30px; }
-      .qps-timeseries .bootbox-close-button               { width: 40px; font-size: 40px; z-index: 1; position: absolute; right: 15px; }
-      .qps-timeseries .modebar-container                  { top: unset !important; bottom: 0; left: 0; text-align: center; }
-      .qps-timeseries .modebar-btn                        { font-size: 30px !important; }
-      .qps-timeseries .modebar                            { left: 0; }
-      .qps-timeseries .modebar-container > div            { display: flex; flex-wrap: wrap; justify-content: space-between; }
-      .qps-timeseries .modebar-group:nth-last-child(-n+3) { order: -1; }
-      .qps-timeseries .modebar-group:nth-child(2)         { margin-left: auto }
-      .qps-timeseries .modebar-group:first-of-type        { order: 2; }
-      .qps-timeseries .modebar-group:nth-last-child(-n+2) { order: 1; margin-left: auto; }
-      .qps-timeseries .modebar-group:last-of-type         { position: fixed; left: 0; top: 8px; }
-      .qps-timeseries .rangeslider-rangeplot.xy           { opacity: .15; }
-      .qps-timeseries :is(.rangeslider-handle-min, .rangeslider-handle-max) { height: 21px; width: 8px; translate: -2px -5px; fill: yellow; shape-rendering: optimizespeed; }
+      .${pid} .js-plotly-plot                     { margin-bottom: 30px; }
+      .${pid} .bootbox-close-button               { width: 40px; font-size: 40px; z-index: 1; position: absolute; right: 15px; }
+      .${pid} .modebar-container                  { top: unset !important; bottom: 0; left: 0; text-align: center; }
+      .${pid} .modebar-btn                        { font-size: 30px !important; }
+      .${pid} .modebar                            { left: 0; }
+      .${pid} .modebar-container > div            { display: flex; flex-wrap: wrap; justify-content: space-between; }
+      .${pid} .modebar-group:nth-last-child(-n+3) { order: -1; }
+      .${pid} .modebar-group:nth-child(2)         { margin-left: auto }
+      .${pid} .modebar-group:first-of-type        { order: 2; }
+      .${pid} .modebar-group:nth-last-child(-n+2) { order: 1; margin-left: auto; }
+      .${pid} .modebar-group:last-of-type         { position: fixed; left: 0; top: 8px; }
+      .${pid} .rangeslider-rangeplot.xy           { opacity: .15; }
+      .${pid} :is(.rangeslider-handle-min, .rangeslider-handle-max) { height: 21px; width: 8px; translate: -2px -5px; fill: yellow; shape-rendering: optimizespeed; }
       @media (max-width: 992px) {
-        .qps-timeseries .modal-dialog  { width: 100%; height: 100%; margin: 0; padding: 0; }
-        .qps-timeseries .modal-content { height: auto; min-height: 100%; border-radius: 0; }
+        .${pid} .modal-dialog  { width: 100%; height: 100%; margin: 0; padding: 0; }
+        .${pid} .modal-content { height: auto; min-height: 100%; border-radius: 0; }
       }
-      body:not(.skin-yellow) .qps-timeseries .modebar-group:nth-last-child(-n+3):not(:nth-last-child(-n+2)) { display: none; }
+      body:not(.skin-yellow) .${pid} .modebar-group:nth-last-child(-n+3):not(:nth-last-child(-n+2)) { display: none; }
     </style>`,
   );
 
@@ -72,7 +73,7 @@
                 return;
               }
               actions[layer.id].push({
-                id: 'qps-timeseries',
+                id: pid,
                 class: GUI.getFontClass('chart-line'),
                 hint: 'PS Time Series',
                 cbk: (layer, feature) => {
@@ -84,7 +85,7 @@
                     .showModalDialog({
                       message: chart.$mount().$el,
                       size: 'large',
-                      className: 'qps-timeseries',
+                      className: pid,
                     })
                     .on("shown.bs.modal", async function() {
                       const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/' + layer.id + '/' + feature.attributes[G3W_FID])).json();

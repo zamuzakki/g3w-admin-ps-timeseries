@@ -6,26 +6,26 @@ from django.http.response import JsonResponse
 class QPSTimeseriesPlot(View):
 
     def get(self, *args, **kwargs):
+
         DELTA = 5
         TITLE = 'PS Time Series Viewer<br><sub>coher.: <pid> vel.: <pid> v_stdev.: <pid></sub>'
-        X = [
-            '2013-08-04 22:23:00',
-            '2013-09-04 22:23:00',
-            '2013-10-04 22:23:00',
-            '2013-11-04 22:23:00',
-            '2013-12-04 22:23:00',
-        ]
+        X = ['2013-08-04 22:23:00', '2013-09-04 22:23:00', '2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00']
         Y = [4, 1, 7, 1, 4]
+
+        ## WebGL optimization
+        ## https://plotly.com/javascript/webgl-vs-svg/
+        TYPE = 'scattergl'
+
         ## Fake Data
         ## https://plotly.com/javascript/
         return JsonResponse({
             'data':  [
-              ## SCATTER
+              ## TRACE0 = scatter
               {
                 'x': X,
                 'y': Y,
                 'mode': 'markers',
-                'type': 'scatter',
+                'type': TYPE,
                 'name': 'Scatter',
                 'marker': {
                   'size': 8,
@@ -33,13 +33,13 @@ class QPSTimeseriesPlot(View):
                   'symbol': 'square',
                 },
               },
-              ## REPLICA (+ DELTA)
+              ## TRACE1 = replica + delta
               {
                 'visible': False if 0 == DELTA else True,
                 'x': [] if 0 == DELTA else X,
                 'y': [] if 0 == DELTA else [y + DELTA for y in Y],
                 'mode': 'scatter',
-                'type': 'scatter',
+                'type': TYPE,
                 'name': 'Replica +' + str(DELTA),
                 'marker': {
                   'size': 8,
@@ -47,13 +47,13 @@ class QPSTimeseriesPlot(View):
                   'symbol': 'square',
                 },
               },
-              ## REPLICA (- DELTA)
+              ## TRACE2 = replica - delta
               {
                 'visible': False if 0 == DELTA else True,
                 'x': [] if 0 == DELTA else X,
                 'y': [] if 0 == DELTA else [y - DELTA for y in Y],
                 'mode': 'scatter',
-                'type': 'scatter',
+                'type': TYPE,
                 'name': 'Replica -' + str(DELTA),
                 'marker': {
                   'size': 8,
@@ -61,7 +61,7 @@ class QPSTimeseriesPlot(View):
                   'symbol': 'square',
                 },
               },
-              ## TREND LINE
+              ## TRACE3 = trend line
               {
                 'x': [
                   '2013-08-04 22:23:00',
@@ -72,11 +72,34 @@ class QPSTimeseriesPlot(View):
                 ],
                 'y': [3, 2, 1.5, 2, 4],
                 'mode': 'lines',
+                'type': TYPE,
                 'name': 'Lin Trend',
                 'marker': {
-                  'color': 'red'
-                }
-              }
+                  'color': 'red',
+                },
+              },
+              ## TRACE5 = trend poly 
+              {
+                'x': [
+                  '2013-08-04 22:23:00',
+                  '2013-09-04 22:23:00',
+                  '2013-10-04 22:23:00',
+                  '2013-11-04 22:23:00',
+                  '2013-12-04 22:23:00',
+                ],
+                'y': [3, 2, 1.5, 2, 4],
+                'mode': 'lines',
+                'type': 'scatter',
+                'name': 'Poly Trend',
+                'marker': {
+                  'color': 'green'
+                },
+                # https://plotly.com/javascript/reference/scatter/#scatter-line-shape
+                # https://plotly.com/javascript/reference/scattergl/#scattergl-line-shape
+                'line': {
+                  'shape': 'spline',
+                },
+              },
             ],
             'layout': {
               'xaxis': {

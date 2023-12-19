@@ -12,19 +12,20 @@ __copyright__ = 'Copyright 2015 - 2023, Gis3w'
 __license__ = 'MPL 2.0'
 
 from django.urls import path
-from .api.views import QpsTimeseriesLayerinfoApiView
+from .api.views import (
+    QpsTimeseriesLayerinfoApiView,
+    QpsTimeseriesPlotDataApiView
+)
 from .config import QPS_TIMESERIES_API_LAYERINFO
 
-from .views import (
-    QPSTimeseriesPlot
-)
 
 urlpatterns = [
-    path(f'{QPS_TIMESERIES_API_LAYERINFO}/<int:pk>/', QpsTimeseriesLayerinfoApiView.as_view(),
+    path(f'{QPS_TIMESERIES_API_LAYERINFO}/<int:pk>/',
+         QpsTimeseriesLayerinfoApiView.as_view(),
          name='qpstimeseries-api-layerinfo'),
     path(
         'api/plot/<str:layer_id>/<int:feature_id>',
-        QPSTimeseriesPlot.as_view(),
-        name='qps-timeseries-plot'
+        QpsTimeseriesPlotDataApiView.as_view(),
+        name='qps-timeseries-api-plot-data'
     ),
 ]

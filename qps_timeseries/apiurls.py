@@ -15,7 +15,16 @@ from django.urls import path
 from .api.views import QpsTimeseriesLayerinfoApiView
 from .config import QPS_TIMESERIES_API_LAYERINFO
 
+from .views import (
+    QPSTimeseriesPlot
+)
+
 urlpatterns = [
     path(f'{QPS_TIMESERIES_API_LAYERINFO}/<int:pk>/', QpsTimeseriesLayerinfoApiView.as_view(),
          name='qpstimeseries-api-layerinfo'),
+    path(
+        'api/plot/<str:layer_id>/<int:feature_id>',
+        QPSTimeseriesPlot.as_view(),
+        name='qps-timeseries-plot'
+    ),
 ]

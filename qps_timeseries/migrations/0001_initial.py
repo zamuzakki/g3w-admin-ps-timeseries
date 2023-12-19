@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('qdjango', '0116_auto_20231204_1357'),
+        ('qdjango', '0115_project_geocoding_providers'),
     ]
 
     operations = [

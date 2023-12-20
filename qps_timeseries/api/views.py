@@ -201,6 +201,10 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                     # 'range': [ ],
                   'thickness': 0.1,
                 },
+                'showspikes': False,
+                'spikecolor': 'black',
+                'spikemode': 'toaxis+across+marker',
+                'spikethickness': 2,
                 'type': 'date'
               },
               'yaxis': {
@@ -214,6 +218,10 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                 'tickcolor': '#000',
                 'zeroline': False,
                 'rangeslider': { },
+                'showspikes': False,
+                'spikecolor': 'black',
+                'spikemode': 'toaxis+marker',
+                'spikethickness': 2,
                 'type': 'linear',
               },
               'title': {

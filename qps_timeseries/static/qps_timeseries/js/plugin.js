@@ -114,15 +114,16 @@
                             },
                             btn('Toggle scatter lines', 'black', data, [0]),
                             btn('Toggle replica lines', 'blue', data, [1, 2]),
-                          ], [{
+                          ], [
+                            initConfig?.user?.admin_url && {
                               name: 'Edit in admin',
                               icon: Plotly.Icons.pencil,
                               direction: 'up',
                               click(gd) {
-                                window.open(initConfig?.user?.admin_url, '_blank');
+                                window.open(initConfig.user.admin_url + 'qps_timeseries/projects/', '_blank');
                               },
                             },
-                          ], [{
+                          ].filter(Boolean), [{
                             name: 'Download plot as svg',
                             icon: {
                               width: 70,

@@ -120,7 +120,7 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
               ## TRACE1 = replica + delta
               {
                 'visible': False if 0 == DELTA_U else True,
-                'x': [] if 0 == DELTA_U else X,
+                # 'x': [] if 0 == DELTA_U else X,
                 'y': [] if 0 == DELTA_U else [y + DELTA_U for y in Y],
                 'mode': 'scatter',
                 'type': TYPE,
@@ -134,7 +134,7 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
               ## TRACE2 = replica - delta
               {
                 'visible': False if 0 == DELTA_D else True,
-                'x': [] if 0 == DELTA_D else X,
+                # 'x': [] if 0 == DELTA_D else X,
                 'y': [] if 0 == DELTA_D else [y - DELTA_D for y in Y],
                 'mode': 'scatter',
                 'type': TYPE,

@@ -170,8 +170,8 @@ class _QpsTimeseriesPlotDataApiView(G3WAPIView):
 
     def get(self, request, *args, **kwargs):
 
-        DELTA_U = 5
-        DELTA_D = 0
+        DELTA_1 = 5
+        DELTA_2 = 0
 
         TITLE = 'PS Time Series Viewer<br><sub>coher.: <pid> vel.: <pid> v_stdev.: <pid></sub>'
         X = ['2013-08-04 22:23:00', '2013-09-04 22:23:00', '2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00']
@@ -203,12 +203,12 @@ class _QpsTimeseriesPlotDataApiView(G3WAPIView):
               },
               ## TRACE1 = replica + delta
               {
-                'visible': False if 0 == DELTA_U else True,
-                # 'x': [] if 0 == DELTA_U else X,
-                'y': [] if 0 == DELTA_U else [y + DELTA_U for y in Y],
+                'visible': False if 0 == DELTA_1 else True,
+                # 'x': [] if 0 == DELTA_1 else X,
+                'y': [] if 0 == DELTA_1 else [y + DELTA_1 for y in Y],
                 'mode': 'scatter',
                 'type': TYPE,
-                'name': 'Replica +' + str(DELTA_U),
+                'name': 'Replica +' + str(DELTA_1),
                 'marker': {
                   'size': 8,
                   'color': 'blue',
@@ -217,12 +217,12 @@ class _QpsTimeseriesPlotDataApiView(G3WAPIView):
               },
               ## TRACE2 = replica - delta
               {
-                'visible': False if 0 == DELTA_D else True,
-                # 'x': [] if 0 == DELTA_D else X,
-                'y': [] if 0 == DELTA_D else [y - DELTA_D for y in Y],
+                'visible': False if 0 == DELTA_2 else True,
+                # 'x': [] if 0 == DELTA_2 else X,
+                'y': [] if 0 == DELTA_2 else [y - DELTA_2 for y in Y],
                 'mode': 'scatter',
                 'type': TYPE,
-                'name': 'Replica -' + str(DELTA_D),
+                'name': 'Replica -' + str(DELTA_2),
                 'marker': {
                   'size': 8,
                   'color': 'blue',
@@ -274,7 +274,7 @@ class _QpsTimeseriesPlotDataApiView(G3WAPIView):
                 'showgrid': XGRID,
                 'title': '[Date]',
                 'autorange': True,
-                'linecolor': 'black',
+                'linecolor': 'rgb(238, 238, 238)',
                 'mirror': True,
                 'ticks': 'outside',
                 'tickcolor': '#000',
@@ -285,6 +285,10 @@ class _QpsTimeseriesPlotDataApiView(G3WAPIView):
                     # 'range': [ ],
                   'thickness': 0.1,
                 },
+                'showspikes': False,
+                'spikecolor': 'black',
+                'spikemode': 'toaxis+across+marker',
+                'spikethickness': 2,
                 'type': 'date'
               },
               'yaxis': {
@@ -292,12 +296,16 @@ class _QpsTimeseriesPlotDataApiView(G3WAPIView):
                 'title': '[mm]',
                 'autorange': True,
                 # 'range': [0 - DELTA, 8 + DELTA],
-                'linecolor': 'black',
+                'linecolor': 'rgb(238, 238, 238)',
                 'mirror': True,
                 'ticks': 'outside',
                 'tickcolor': '#000',
                 'zeroline': False,
                 'rangeslider': { },
+                'showspikes': False,
+                'spikecolor': 'black',
+                'spikemode': 'toaxis+marker',
+                'spikethickness': 2,
                 'type': 'linear',
               },
               'title': {

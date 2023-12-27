@@ -81,9 +81,10 @@
                       className: pid,
                     })
                     .on("shown.bs.modal", async function() {
-                      const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
+                      const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/'+ initConfig.group.initproject.split(':')[1] +  '/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
                       data[1].x = data[2].x = data[0].x; // trace replicas
-                      Plotly.newPlot(chart.$refs.chart, data, layout, {...config, modeBarButtonsToAdd: [[
+                      Plotly.newPlot(chart.$refs.chart, data, layout, {...config, modeBarButtonsToAdd: [
+                          [
                             {
                               name: 'Add replica lines',
                               icon: {
@@ -103,7 +104,7 @@
                             {
                               name: 'Toggle grid lines',
                               icon: {
-                                svg: `<svg xmlns="http://www.w3.org/2000/svg" fill="#c6c6c6" viewBox="0 0 256 256"><style>svg{fill:#c6c6c6}svg:hover{fill:#7b7b7b}.x>path:nth-of-type(1),.y>path:nth-of-type(2),svg:not(.y.x)>path:nth-of-type(3){display: none}</style><path d="M74 246c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/><path d="M241 79H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10z"/><path d="M241 20H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 226H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm-226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/></svg>`,
+                                svg: `<svg id="${pid}-grid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><style>#${pid}-grid{fill:#c6c6c6}#${pid}-grid:hover{fill:#7b7b7b}#${pid}-grid.x>path:nth-of-type(1),#${pid}-grid.y>path:nth-of-type(2),#${pid}-grid:not(.y.x)>path:nth-of-type(3){display: none}</style><path d="M74 246c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/><path d="M241 79H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10z"/><path d="M241 20H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 226H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm-226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/></svg>`,
                               },
                               click(p, e) {
                                 let x = layout.xaxis.showgrid; 
@@ -113,15 +114,16 @@
                             },
                             btn('Toggle scatter lines', 'black', data, [0]),
                             btn('Toggle replica lines', 'blue', data, [1, 2]),
-                          ], [{
+                          ], [
+                            initConfig?.user?.admin_url && {
                               name: 'Edit in admin',
                               icon: Plotly.Icons.pencil,
                               direction: 'up',
                               click(gd) {
-                                window.open(initConfig?.user?.admin_url, '_blank');
+                                window.open(initConfig.user.admin_url + 'qps_timeseries/projects/', '_blank');
                               },
                             },
-                          ], [{
+                          ].filter(Boolean), [{
                             name: 'Download plot as svg',
                             icon: {
                               width: 70,
@@ -154,5 +156,5 @@
       this.setReady(true);
     }
   })();
-  
+
 })();

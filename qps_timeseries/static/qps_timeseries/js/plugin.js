@@ -81,7 +81,7 @@
                       className: pid,
                     })
                     .on("shown.bs.modal", async function() {
-                      const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
+                      const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/'+ initConfig.group.id +  '/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
                       data[1].x = data[2].x = data[0].x; // trace replicas
                       Plotly.newPlot(chart.$refs.chart, data, layout, {...config, modeBarButtonsToAdd: [
                           [

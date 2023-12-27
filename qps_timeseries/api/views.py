@@ -14,10 +14,19 @@ __license__ = 'MPL 2.0'
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import APIException
 from core.api.base.views import G3WAPIView, Response
-from core.utils.qgisapi import get_qgis_layer
+from core.utils.qgisapi import (
+    get_qgis_layer,
+    get_layer_fids_from_server_fids
+)
 from qdjango.models import Layer
+from qps_timeseries.utils import get_base_plot_data
+from qps_timeseries.models import QpsTimeseriesProject
 from qgis.core import QgsFeature
-from qgis.PyQt.QtCore import QDate, QRegExp, Qt
+from qgis.PyQt.QtCore import (
+    QDate,
+    QRegExp,
+    Qt
+)
 from .permissions import GetLayerInfoPermission
 
 
@@ -48,38 +57,113 @@ class QpsTimeseriesLayerinfoApiView(G3WAPIView):
         qfeature = QgsFeature()
         qfeatures = qlayer.getFeatures()
         qfeatures.nextFeature(qfeature)
-        attrs = qfeature.attributes()
 
-        x, y = [], []  # lists containg x,y values
-        infoFields = []  # list of the fields containing info to be displayed
-
-        ps_source = qlayer.source()
-        ps_fields = qlayer.dataProvider().fields()
-
-        providerType = qlayer.providerType()
-        uri = ps_source
-        subset = ""
-
-        #if providerType == 'ogr' and ps_source.lower().endswith(".shp"):
-        # Shapefile
-        for idx, fld in enumerate(ps_fields):
-            if QRegExp("D\\d{8}", Qt.CaseInsensitive).indexIn(fld.name()) < 0:
-                # info fields are all except those containing dates
-                infoFields.append(fld.name())
-            else:
-                x.append(QDate.fromString(fld.name()[1:], "yyyyMMdd").toPyDate())
-                y.append(float(attrs[idx]))
-
-        self.results.update({
-            'x': x,
-            'y': y,
-            'fields': infoFields
-        })
+        self.results.update(get_base_plot_data(qfeature, qlayer))
 
         return Response(self.results.results)
 
 
 class QpsTimeseriesPlotDataApiView(G3WAPIView):
+    """
+    API view for get data plot
+    """
+
+    # TODO: add permisisons classes
+
+    def get(self, request, *args, **kwargs):
+
+        # Get QGIS layer instance
+        layer = Layer.objects.get(project_id=kwargs['project_pk'], qgs_layer_id=kwargs['layer_id'])
+        qlayer = get_qgis_layer(layer)
+        qfeature = qlayer.getFeature(get_layer_fids_from_server_fids([str(kwargs['feature_id'])], qlayer)[0])
+
+        # Get QPS Timeseries layer property
+        qpst_project = QpsTimeseriesProject.objects.get(project_id=kwargs['project_pk'])
+        qpst_layer = qpst_project.layers.get(layer=layer)
+
+        # Get base data
+        base_data_plot = get_base_plot_data(qfeature, qlayer, qpst_layer)
+
+        ## WebGL optimization
+        ## https://plotly.com/javascript/webgl-vs-svg/
+        TYPE = 'scattergl'
+
+        TITLE = 'PS Time Series Viewer<br><sub>coher.: <pid> vel.: <pid> v_stdev.: <pid></sub>'
+
+        XGRID = qpst_layer.h_grid
+        YGRID = qpst_layer.v_grid
+
+        self.results.results.update({
+            'data': [
+                ## TRACE0 = scatter
+                {
+                    'x': base_data_plot['x'],
+                    'y': base_data_plot['y'],
+                    'type': TYPE,
+                    'name': 'Scatter',
+                    'marker': {
+                        'size': 8,
+                        'color': 'black',
+                        'symbol': 'square',
+                    }
+                }
+            ],
+            'layout': {
+                'xaxis': {
+                    'showgrid': XGRID,
+                    'title': '[Date]',
+                    'autorange': True,
+                    'linecolor': 'black',
+                    'mirror': True,
+                    'ticks': 'outside',
+                    'tickcolor': '#000',
+                    'zeroline': False,
+                    'rangeslider': {
+                        # 'range': [ '2013-07-04 22:23:00', '2014-01-04 22:23:00' ],
+                        # 'range': [ '2013', '2014' ],
+                        # 'range': [ ],
+                        'thickness': 0.1,
+                    },
+                    'type': 'date'
+                },
+                'yaxis': {
+                    'showgrid': YGRID,
+                    'title': '[mm]',
+                    'autorange': True,
+                    # 'range': [0 - DELTA, 8 + DELTA],
+                    'linecolor': 'black',
+                    'mirror': True,
+                    'ticks': 'outside',
+                    'tickcolor': '#000',
+                    'zeroline': False,
+                    'rangeslider': {},
+                    'type': 'linear',
+                },
+                'title': {
+                    "font": {
+                        "size": 20,
+                        "color": "blue",
+                        "family": "monospace",
+                    },
+                    'text': TITLE,
+                },
+                'hovermode': 'closest',
+            },
+            'config': {
+                'displayModeBar': True,
+                'modeBarButtonsToRemove': ['select2d', 'lasso2d', 'resetScale2d'],
+                'editable': True,
+                'responsive': True,
+                'scrollZoom': True,
+                'toImageButtonOptions': {'filename': 'qps-timeseries'},
+            },
+        })
+
+        return Response(self.results.results)
+
+
+
+class _QpsTimeseriesPlotDataApiView(G3WAPIView):
     """
     API view for get data plot
     """

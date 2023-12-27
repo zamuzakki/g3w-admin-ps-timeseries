@@ -24,7 +24,7 @@ urlpatterns = [
          QpsTimeseriesLayerinfoApiView.as_view(),
          name='qpstimeseries-api-layerinfo'),
     path(
-        'api/plot/<str:layer_id>/<int:feature_id>',
+        'api/plot/<int:project_pk>/<str:layer_id>/<int:feature_id>',
         QpsTimeseriesPlotDataApiView.as_view(),
         name='qps-timeseries-api-plot-data'
     ),

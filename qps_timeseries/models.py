@@ -117,7 +117,7 @@ class QpsTimeseriesLayer(models.Model):
     # Chart title
     title_part_1 = models.CharField('Title part 1', null=False, blank=False, max_length=255, default='coher.:')
     title_part_1_field = models.CharField('Title part 1 field', null=False, blank=False, max_length=255)
-    title_part_2 = models.CharField('Title part 2', null=False, blank=False, max_length=255, default='vel..:')
+    title_part_2 = models.CharField('Title part 2', null=False, blank=False, max_length=255, default='vel.:')
     title_part_2_field = models.CharField('Title part 2 field', null=False, blank=False, max_length=255)
     title_part_3 = models.CharField('Title part 3', null=False, blank=False, max_length=255, default='v_stdev.:')
     title_part_3_field = models.CharField('Title part 3 field', null=False, blank=False, max_length=255)

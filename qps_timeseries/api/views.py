@@ -19,7 +19,10 @@ from core.utils.qgisapi import (
     get_layer_fids_from_server_fids
 )
 from qdjango.models import Layer
-from qps_timeseries.utils import get_base_plot_data
+from qps_timeseries.utils import (
+    get_base_plot_data,
+    get_line_trend_plot_data
+)
 from qps_timeseries.models import QpsTimeseriesProject
 from qgis.core import QgsFeature
 from qgis.PyQt.QtCore import (
@@ -88,17 +91,24 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
         ## https://plotly.com/javascript/webgl-vs-svg/
         TYPE = 'scattergl'
 
-        TITLE = 'PS Time Series Viewer<br><sub>coher.: <pid> vel.: <pid> v_stdev.: <pid></sub>'
+        X = base_data_plot['x']
+        Y = base_data_plot['y']
+
+        TITLE = (f'{qpst_layer.title_part_1} {qfeature[qpst_layer.title_part_1_field]} '
+                 f'{qpst_layer.title_part_2} {qfeature[qpst_layer.title_part_2_field]} '
+                 f'{qpst_layer.title_part_3} {qfeature[qpst_layer.title_part_3_field]} ')
 
         XGRID = qpst_layer.h_grid
         YGRID = qpst_layer.v_grid
 
-        self.results.results.update({
-            'data': [
+        DELTA_UP = qpst_layer.replica_dist if qpst_layer.replica_up else 0
+        DELTA_DOWN = qpst_layer.replica_dist if qpst_layer.replica_down else 0
+
+        data = [
                 ## TRACE0 = scatter
                 {
-                    'x': base_data_plot['x'],
-                    'y': base_data_plot['y'],
+                    'x': X,
+                    'y': Y,
                     'type': TYPE,
                     'name': 'Scatter',
                     'marker': {
@@ -106,12 +116,74 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                         'color': 'black',
                         'symbol': 'square',
                     }
-                }
-            ],
+                },
+                ## TRACE1 = replica + delta up
+                {
+                    'visible': False if 0 == DELTA_UP else True,
+                    # 'x': [] if 0 == DELTA_1 else X,
+                    'y': [] if 0 == DELTA_UP else [y + DELTA_UP for y in Y],
+                    'mode': 'scatter',
+                    'type': TYPE,
+                    'name': 'Replica +' + str(DELTA_UP),
+                    'marker': {
+                        'size': 8,
+                        'color': 'blue',
+                        'symbol': 'square',
+                    },
+                },
+                ## TRACE2 = replica - delta down
+                {
+                    'visible': False if 0 == DELTA_DOWN else True,
+                    'y': [] if 0 == DELTA_DOWN else [y - DELTA_DOWN for y in Y],
+                    'mode': 'scatter',
+                    'type': TYPE,
+                    'name': 'Replica -' + str(DELTA_DOWN),
+                    'marker': {
+                        'size': 8,
+                        'color': 'blue',
+                        'symbol': 'square',
+                    },
+                },
+            ]
+
+        # Add TRACE3 if Lin trend option is enabled
+        if qpst_layer.lin_trend:
+            lin_trend = get_line_trend_plot_data(X,Y)
+            data.append({
+                'x': lin_trend[0],
+                'y': lin_trend[1],
+                'mode': 'lines',
+                'type': TYPE,
+                'name': 'Lin Trend',
+                'line': {
+                  'color': 'red',
+                },
+            })
+
+        # Add TRACE4 if Poly trend option is enabled
+        if qpst_layer.poly_trend:
+            lin_trend = get_line_trend_plot_data(X, Y, 3)
+            data.append({
+                'visible': True,
+                'x': lin_trend[0],
+                'y': lin_trend[1],
+                'mode': 'lines',
+                'type': 'scatter',
+                'name': 'Poly Trend',
+                'line': {
+                    'shape': 'spline',
+                    'smoothing': 1.3,
+                    'color': 'green'
+                },
+            })
+
+
+        self.results.results.update({
+            'data': data,
             'layout': {
                 'xaxis': {
                     'showgrid': XGRID,
-                    'title': '[Date]',
+                    'title': qpst_layer.x_axis_label if qpst_layer.labels else None,
                     'autorange': True,
                     'linecolor': 'black',
                     'mirror': True,
@@ -128,7 +200,7 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                 },
                 'yaxis': {
                     'showgrid': YGRID,
-                    'title': '[mm]',
+                    'title': qpst_layer.y_axis_label if qpst_layer.labels else None,
                     'autorange': True,
                     # 'range': [0 - DELTA, 8 + DELTA],
                     'linecolor': 'black',
@@ -152,179 +224,10 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
             'config': {
                 'displayModeBar': True,
                 'modeBarButtonsToRemove': ['select2d', 'lasso2d', 'resetScale2d'],
-                'editable': True,
+                'editable': False,
                 'responsive': True,
                 'scrollZoom': True,
                 'toImageButtonOptions': {'filename': 'qps-timeseries'},
-            },
-        })
-
-        return Response(self.results.results)
-
-
-
-class _QpsTimeseriesPlotDataApiView(G3WAPIView):
-    """
-    API view for get data plot
-    """
-
-    def get(self, request, *args, **kwargs):
-
-        DELTA_1 = 5
-        DELTA_2 = 0
-
-        TITLE = 'PS Time Series Viewer<br><sub>coher.: <pid> vel.: <pid> v_stdev.: <pid></sub>'
-        X = ['2013-08-04 22:23:00', '2013-09-04 22:23:00', '2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00']
-        Y = [4, 1, 7, 1, 4]
-
-        XGRID = True
-        YGRID = True
-
-        ## WebGL optimization
-        ## https://plotly.com/javascript/webgl-vs-svg/
-        TYPE = 'scattergl'
-
-        ## Fake Data
-        ## https://plotly.com/javascript/
-        self.results.results.update({
-            'data':  [
-              ## TRACE0 = scatter
-              {
-                'x': X,
-                'y': Y,
-                'mode': 'markers',
-                'type': TYPE,
-                'name': 'Scatter',
-                'marker': {
-                  'size': 8,
-                  'color': 'black',
-                  'symbol': 'square',
-                },
-              },
-              ## TRACE1 = replica + delta
-              {
-                'visible': False if 0 == DELTA_1 else True,
-                # 'x': [] if 0 == DELTA_1 else X,
-                'y': [] if 0 == DELTA_1 else [y + DELTA_1 for y in Y],
-                'mode': 'scatter',
-                'type': TYPE,
-                'name': 'Replica +' + str(DELTA_1),
-                'marker': {
-                  'size': 8,
-                  'color': 'blue',
-                  'symbol': 'square',
-                },
-              },
-              ## TRACE2 = replica - delta
-              {
-                'visible': False if 0 == DELTA_2 else True,
-                # 'x': [] if 0 == DELTA_2 else X,
-                'y': [] if 0 == DELTA_2 else [y - DELTA_2 for y in Y],
-                'mode': 'scatter',
-                'type': TYPE,
-                'name': 'Replica -' + str(DELTA_2),
-                'marker': {
-                  'size': 8,
-                  'color': 'blue',
-                  'symbol': 'square',
-                },
-              },
-              ## TRACE3 = trend line
-              {
-                'x': [
-                  '2013-08-04 22:23:00',
-                  '2013-09-04 22:23:00',
-                  '2013-10-04 22:23:00',
-                  '2013-11-04 22:23:00',
-                  '2013-12-04 22:23:00',
-                ],
-                'y': [3, 2, 1.5, 2, 4],
-                'mode': 'lines',
-                'type': TYPE,
-                'name': 'Lin Trend',
-                'line': {
-                  'color': 'red',
-                },
-              },
-              ## TRACE5 = trend poly
-              {
-                'visible': 'legendonly',
-                'x': [
-                  '2013-08-04 22:23:00',
-                  '2013-09-04 22:23:00',
-                  '2013-10-04 22:23:00',
-                  '2013-11-04 22:23:00',
-                  '2013-12-04 22:23:00',
-                ],
-                'y': [3, 2, 1.5, 2, 4],
-                'mode': 'lines',
-                'type': 'scatter',
-                'name': 'Poly Trend',
-                # https://plotly.com/javascript/reference/scatter/#scatter-line-shape
-                # https://plotly.com/javascript/reference/scattergl/#scattergl-line-shape
-                'line': {
-                  'shape': 'spline',
-                  'smoothing': 1.3,
-                  'color': 'green'
-                },
-              },
-            ],
-            'layout': {
-              'xaxis': {
-                'showgrid': XGRID,
-                'title': '[Date]',
-                'autorange': True,
-                'linecolor': 'rgb(238, 238, 238)',
-                'mirror': True,
-                'ticks': 'outside',
-                'tickcolor': '#000',
-                'zeroline': False,
-                'rangeslider': {
-                    # 'range': [ '2013-07-04 22:23:00', '2014-01-04 22:23:00' ],
-                    # 'range': [ '2013', '2014' ],
-                    # 'range': [ ],
-                  'thickness': 0.1,
-                },
-                'showspikes': False,
-                'spikecolor': 'black',
-                'spikemode': 'toaxis+across+marker',
-                'spikethickness': 2,
-                'type': 'date'
-              },
-              'yaxis': {
-                'showgrid': YGRID,
-                'title': '[mm]',
-                'autorange': True,
-                # 'range': [0 - DELTA, 8 + DELTA],
-                'linecolor': 'rgb(238, 238, 238)',
-                'mirror': True,
-                'ticks': 'outside',
-                'tickcolor': '#000',
-                'zeroline': False,
-                'rangeslider': { },
-                'showspikes': False,
-                'spikecolor': 'black',
-                'spikemode': 'toaxis+marker',
-                'spikethickness': 2,
-                'type': 'linear',
-              },
-              'title': {
-                "font": {
-                  "size": 20,
-                  "color": "blue",
-                  "family": "monospace",
-                },
-                'text': TITLE,
-              },
-              'hovermode': 'closest',
-            },
-            'config': {
-              'displayModeBar': True,
-              'modeBarButtonsToRemove': ['select2d', 'lasso2d', 'resetScale2d'],
-              'editable': True,
-              'responsive': True,
-              'scrollZoom': True,
-              'toImageButtonOptions': { 'filename': 'qps-timeseries' },
             },
         })
 

@@ -17,6 +17,9 @@ from qgis.PyQt.QtCore import (
     Qt
 )
 
+from matplotlib.dates import date2num, num2date
+import numpy as np
+
 
 def get_base_plot_data(qgs_feature, qgs_layer, qps_timeseries_layer=None):
     """
@@ -59,9 +62,30 @@ def get_base_plot_data(qgs_feature, qgs_layer, qps_timeseries_layer=None):
                 x.append(x_date)
                 y.append(float(attrs[idx]))
 
+    if qps_timeseries_layer and qps_timeseries_layer.detrending:
+        y = np.array(y) - np.array(get_line_trend_plot_data(x, y)[1])
+
 
     return {
         'x': x,
         'y': y,
         'fields': infoFields
     }
+
+def get_line_trend_plot_data(x, y, d=1):
+    """
+    Get x and y values for trend line (line and poly)
+
+    Following code from QGIS desktop plugin PS Tme series
+    https://gitlab.com/faunalia/ps-speed/-/blob/master/ps-speed/pstimeseries_dlg.py#L204
+
+    :param x: x values (datetime)
+    :param y: y values (float)
+    :param d: degree of polynomial
+    :return type: tuple
+    """
+
+    x = date2num(np.array(x))
+    y = np.array(y)
+    p = np.polyfit(x, y, d)
+    return num2date(x), np.polyval(p, x)

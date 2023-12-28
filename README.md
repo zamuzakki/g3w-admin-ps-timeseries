@@ -4,6 +4,12 @@ Porting on G3W-SUITE of QGIS desktop plugin https://plugins.qgis.org/plugins/pst
 
 ![QGIS desktop](media/screenshot.png)
 
+On G3W-SUITE:
+
+![G3W-ADMIN](media/screenshot_admin.png)
+
+![G3W-CLIENT](media/screenshot_client.png)
+
 ## Installation
 
 Install *qprocessing* module into [`g3w-admin`](https://github.com/g3w-suite/g3w-admin/tree/v.3.7.x/g3w-admin) applications folder:

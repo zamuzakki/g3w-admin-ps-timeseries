@@ -41,7 +41,6 @@ class QpsTimeseriesLayerinfoApiView(G3WAPIView):
     API for get information about PS Timeseries layer
     """
 
-    # Todo: add permisisons classes
     permission_classes = (
         GetLayerInfoPermission,
     )
@@ -109,6 +108,9 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
         DELTA_UP = qpst_layer.replica_dist if qpst_layer.replica_up else 0
         DELTA_DOWN = qpst_layer.replica_dist if qpst_layer.replica_down else 0
 
+        # Set mode plot
+        MODE = 'lines+markers' if qpst_layer.lines else 'markers'
+
         data = [
                 ## TRACE0 = scatter
                 {
@@ -116,6 +118,7 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                     'y': Y,
                     'type': TYPE,
                     'name': 'Scatter',
+                    'mode': MODE,
                     'marker': {
                         'size': 8,
                         'color': 'black',

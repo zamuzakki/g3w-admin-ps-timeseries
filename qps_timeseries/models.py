@@ -93,8 +93,8 @@ class QpsTimeseriesLayer(models.Model):
     # Scale options
     min_date = models.DateField('Min date', null=False, blank=False)
     max_date = models.DateField('Max date', null=False, blank=False)
-    min_y = models.FloatField('Min Y', null=False, blank=False)
-    max_y = models.FloatField('Max Y', null=False, blank=False)
+    min_y = models.FloatField('Min Y', null=True, blank=True)
+    max_y = models.FloatField('Max Y', null=True, blank=True)
 
     # Replica
     replica_up = models.BooleanField('Up', null=False, blank=False, default=False)

@@ -123,16 +123,14 @@ class QpsTimeseriesLayerForm(G3WFormMixin, G3WRequestFormMixin, ModelForm):
                                             Div(
                                                 'min_date',
                                                 'max_date',
-                                                Div(
-                                                    Div(
-                                                        'min_y',
-                                                        css_class='col-md-6'
-                                                        ),
-                                                        Div(
-                                                            'max_y',
-                                                            css_class='col-md-6'
-                                                        ),
-                                                    css_class='row'),
+                                                # Div(
+                                                #     Div(
+                                                #         'min_y', css_class='col-md-6'
+                                                #         ),
+                                                #         Div(
+                                                #             'max_y', css_class='col-md-6'
+                                                #         ),
+                                                #     css_class='row'),
                                                 css_class='box-body',
                                             ),
                                             css_class='box box-success'

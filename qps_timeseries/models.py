@@ -136,6 +136,15 @@ class QpsTimeseriesLayer(models.Model):
             raise ValidationError({'layer': _("Layer geometry type is not in allowed type: " +
                                               ", ".join(GEO_TYPE_VECTOR_LAYER_ALLOWED))})
 
+        # Check for layer inside the project
+        if not self.pk and len(QpsTimeseriesLayer.objects.filter(qps_timeseries_project=self.qps_timeseries_project,
+                                                 layer=self.layer)) > 0:
+            raise ValidationError({'layer': _("Layer already set for this project")})
+
+        # Check date
+        if self.min_date > self.max_date:
+            raise ValidationError({'min_date': _("Min date must be lower than max date")})
+
 
     def __str__(self):
         return f"{self.qps_timeseries_project} - {self.layer}"

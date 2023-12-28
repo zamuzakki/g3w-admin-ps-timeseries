@@ -26,6 +26,10 @@ def set_initconfig_value(sender, **kwargs):
     # Check for activation  plugin
     try:
         qpstp = QpsTimeseriesProject.objects.get(project_id=kwargs['project'])
+
+        # Check project permission
+        if not sender.request.user.has_perm('qdjango.view_project', qpstp.project):
+            raise Exception('Permission denied')
     except:
         return None
 

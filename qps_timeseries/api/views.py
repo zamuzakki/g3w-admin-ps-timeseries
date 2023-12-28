@@ -30,7 +30,10 @@ from qgis.PyQt.QtCore import (
     QRegExp,
     Qt
 )
-from .permissions import GetLayerInfoPermission
+from .permissions import (
+    GetLayerInfoPermission,
+    PlotDataPermission
+)
 
 
 class QpsTimeseriesLayerinfoApiView(G3WAPIView):
@@ -71,7 +74,9 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
     API view for get data plot
     """
 
-    # TODO: add permisisons classes
+    permission_classes = (
+        PlotDataPermission,
+    )
 
     def get(self, request, *args, **kwargs):
 

@@ -12,7 +12,10 @@ __copyright__ = 'Copyright 2015 - 2023, Gis3w'
 __license__ = 'MPL 2.0'
 
 from rest_framework.permissions import BasePermission
-from qdjango.models import Layer
+from qdjango.models import (
+    Layer,
+    Project
+)
 
 import logging
 
@@ -35,4 +38,19 @@ class GetLayerInfoPermission(BasePermission):
             return request.user.has_perm('qdjango.view_project', layer.project)
         except Exception as e:
             logger.debug(f'[QPS_TIMESERIES] - GetLayerInfoPermission: {e}')
+            return False
+
+
+class PlotDataPermission(BasePermission):
+    """ Check permission for plot data """
+
+    def has_permission(self, request, view):
+
+        try:
+
+            project = Project.objects.get(pk=view.kwargs['project_pk'])
+            return request.user.has_perm('qdjango.view_project', project)
+
+        except Exception as e:
+            logger.debug(f'[QPS_TIMESERIES] - PlotDataPermission: {e}')
             return False

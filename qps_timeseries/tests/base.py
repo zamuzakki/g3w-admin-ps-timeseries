@@ -22,7 +22,7 @@ CURRENT_PATH = os.path.dirname(__file__)
 TEST_BASE_PATH = 'data/'
 DATASOURCE_PATH = '{}/{}project_data'.format(CURRENT_PATH, TEST_BASE_PATH)
 
-QGS_PROJECT_FILE = 'projects/test_qgis_328.qgs'
+QGS_PROJECT_FILE = 'projects/qps_timeseries.qgs'
 
 
 

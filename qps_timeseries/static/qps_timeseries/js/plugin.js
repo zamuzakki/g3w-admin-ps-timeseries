@@ -51,13 +51,6 @@
     }
   });
 
-  /**
-   * Match strings with the following pattern:
-   * - starts with the letter "D"
-   * - followed by 8 digits representing the date in the format "YYYYMMDD"
-   */
-  const DATE_REGEX = /^D\d{8}$/;
-
   new (class extends Plugin {
     constructor() {
       super({
@@ -69,7 +62,7 @@
           .getService('queryresults')
           .onafter('addActionsForLayers', (actions, layers) => {
             layers.forEach(layer => {
-              if (!layer.attributes.some(attr => DATE_REGEX.test(attr.name))) {
+              if (!this.config.layers.includes(layer.id)) {
                 return;
               }
               actions[layer.id].push({
@@ -88,8 +81,10 @@
                       className: pid,
                     })
                     .on("shown.bs.modal", async function() {
-                      const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
-                      Plotly.newPlot(chart.$refs.chart, data, layout, {...config, modeBarButtonsToAdd: [[
+                      const { data, layout, config } = await (await fetch(initConfig.baseurl + 'qps_timeseries/api/plot/'+ initConfig.group.initproject.split(':')[1] +  '/' + layer.id + '/' + feature.attributes[G3W_FID])).json();
+                      data[1].x = data[2].x = data[0].x; // trace replicas
+                      Plotly.newPlot(chart.$refs.chart, data, layout, {...config, modeBarButtonsToAdd: [
+                          [
                             {
                               name: 'Add replica lines',
                               icon: {
@@ -102,14 +97,14 @@
                                 if (!delta || !isFinite(delta)) {
                                   return Plotly.update(chart.$refs.chart, { visible: false }, {}, [1, 2]);
                                 }
-                                Plotly.update(chart.$refs.chart, { name: `Replica +${delta}`, x: [data[0].x], y: [data[0].y.map(y => y+delta)], visible: true }, {}, [1]);
-                                Plotly.update(chart.$refs.chart, { name: `Replica -${delta}`, x: [data[0].x], y: [data[0].y.map(y => y-delta)], visible: true }, {}, [2]);
+                                Plotly.update(chart.$refs.chart, { name: `Replica +${delta}`, y: [data[0].y.map(y => y+delta)], visible: true }, {}, [1]);
+                                Plotly.update(chart.$refs.chart, { name: `Replica -${delta}`, y: [data[0].y.map(y => y-delta)], visible: true }, {}, [2]);
                               },
                             },
                             {
                               name: 'Toggle grid lines',
                               icon: {
-                                svg: `<svg xmlns="http://www.w3.org/2000/svg" fill="#c6c6c6" viewBox="0 0 256 256"><style>svg{fill:#c6c6c6}svg:hover{fill:#7b7b7b}.x>path:nth-of-type(1),.y>path:nth-of-type(2),svg:not(.y.x)>path:nth-of-type(3){display: none}</style><path d="M74 246c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/><path d="M241 79H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10z"/><path d="M241 20H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 226H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm-226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/></svg>`,
+                                svg: `<svg id="${pid}-grid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><style>#${pid}-grid{fill:#c6c6c6}#${pid}-grid:hover{fill:#7b7b7b}#${pid}-grid.x>path:nth-of-type(1),#${pid}-grid.y>path:nth-of-type(2),#${pid}-grid:not(.y.x)>path:nth-of-type(3){display: none}</style><path d="M74 246c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm54 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/><path d="M241 79H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 54H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10z"/><path d="M241 20H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm0 226H15a5 5 0 0 1 0-10h226a5 5 0 0 1 0 10zm-226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5zm226 0c-3 0-5-2-5-5V15a5 5 0 0 1 10 0v226c0 3-2 5-5 5z"/></svg>`,
                               },
                               click(p, e) {
                                 let x = layout.xaxis.showgrid; 
@@ -119,15 +114,16 @@
                             },
                             btn('Toggle scatter lines', 'black', data, [0]),
                             btn('Toggle replica lines', 'blue', data, [1, 2]),
-                          ], [{
+                          ], [
+                            initConfig?.user?.admin_url && {
                               name: 'Edit in admin',
                               icon: Plotly.Icons.pencil,
                               direction: 'up',
                               click(gd) {
-                                window.open(initConfig?.user?.admin_url, '_blank');
+                                window.open(initConfig.user.admin_url + 'qps_timeseries/projects/', '_blank');
                               },
                             },
-                          ], [{
+                          ].filter(Boolean), [{
                             name: 'Download plot as svg',
                             icon: {
                               width: 70,
@@ -160,5 +156,5 @@
       this.setReady(true);
     }
   })();
-  
+
 })();

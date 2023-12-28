@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('qdjango', '0116_auto_20231204_1357'),
         ('qps_timeseries', '0001_initial'),
     ]
 

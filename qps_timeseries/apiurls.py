@@ -20,12 +20,17 @@ from .config import QPS_TIMESERIES_API_LAYERINFO
 
 
 urlpatterns = [
-    path(f'{QPS_TIMESERIES_API_LAYERINFO}/<int:pk>/',
-         QpsTimeseriesLayerinfoApiView.as_view(),
-         name='qpstimeseries-api-layerinfo'),
+
     path(
-        'api/plot/<str:layer_id>/<int:feature_id>',
+        f'{QPS_TIMESERIES_API_LAYERINFO}/<int:pk>/',
+         QpsTimeseriesLayerinfoApiView.as_view(),
+         name='qpstimeseries-api-layerinfo'
+    ),
+
+    path(
+        'api/plot/<int:project_pk>/<str:layer_id>/<int:feature_id>',
         QpsTimeseriesPlotDataApiView.as_view(),
         name='qps-timeseries-api-plot-data'
     ),
+
 ]

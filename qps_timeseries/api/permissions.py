@@ -16,6 +16,7 @@ from qdjango.models import (
     Layer,
     Project
 )
+from qps_timseries.models import QpsTimeseriesProject
 
 import logging
 
@@ -48,8 +49,10 @@ class PlotDataPermission(BasePermission):
 
         try:
 
-            project = Project.objects.get(pk=view.kwargs['project_pk'])
-            return request.user.has_perm('qdjango.view_project', project)
+            # In this way is checked ifa qps_tmiserise project is active
+            qpsts = QpsTimeseriesProject.objects.get(project_id=view.kwargs['project_pk'])
+
+            return request.user.has_perm('qdjango.view_project', qpsts.project)
 
         except Exception as e:
             logger.debug(f'[QPS_TIMESERIES] - PlotDataPermission: {e}')

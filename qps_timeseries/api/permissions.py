@@ -16,7 +16,8 @@ from qdjango.models import (
     Layer,
     Project
 )
-from qps_timseries.models import QpsTimeseriesProject
+
+from qps_timeseries.models import QpsTimeseriesProject
 
 import logging
 

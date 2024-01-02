@@ -98,9 +98,12 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
         X = base_data_plot['x']
         Y = base_data_plot['y']
 
-        TITLE = (f'{qpst_layer.title_part_1} {qfeature[qpst_layer.title_part_1_field]} '
-                 f'{qpst_layer.title_part_2} {qfeature[qpst_layer.title_part_2_field]} '
-                 f'{qpst_layer.title_part_3} {qfeature[qpst_layer.title_part_3_field]} ')
+        try:
+            TITLE = (f'{qpst_layer.title_part_1} {qfeature[qpst_layer.title_part_1_field]} '
+                     f'{qpst_layer.title_part_2} {qfeature[qpst_layer.title_part_2_field]} '
+                     f'{qpst_layer.title_part_3} {qfeature[qpst_layer.title_part_3_field]} ')
+        except KeyError:
+            TITLE = ''
 
         XGRID = qpst_layer.h_grid
         YGRID = qpst_layer.v_grid

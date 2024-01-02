@@ -16,7 +16,12 @@ from django.core.files import File
 from core.models import G3WSpatialRefSys, Group as CoreGroup
 from usersmanage.tests.utils import setup_testing_user
 from qdjango.utils.data import QgisProject
+from qps_timeseries.models import (
+    QpsTimeseriesProject,
+    QpsTimeseriesLayer
+)
 import os
+import datetime
 
 CURRENT_PATH = os.path.dirname(__file__)
 TEST_BASE_PATH = 'data/'
@@ -65,6 +70,20 @@ class TestQpsTimeseriesBase(TestCase):
         # Add projects to DB
         qgis_file = File(open(cls.qgis_file, 'r'))
         cls.project = QgisProject(qgis_file)
-        cls.project.title = 'QProcessing Test Project'
+        cls.project.title = 'Qps Timeseries Test Project'
         cls.project.group = cls.project_group
         cls.project.save()
+
+    def create_instance_qpstimseriesproject(self):
+        """ Create a QpsTimeseriesProject and QpsTimeseriesLayer instance """
+
+        qpsts_project = QpsTimeseriesProject(project=self.project.instance)
+        qpsts_project.save()
+        QpsTimeseriesLayer(
+            qps_timeseries_project=qpsts_project,
+            layer=self.project.instance.layer_set.all()[0],
+            min_date=datetime.date(2015, 2, 8),
+            max_date=datetime.date(2021, 12, 21)
+        ).save()
+
+        return qpsts_project

@@ -12,7 +12,7 @@ On G3W-SUITE:
 
 ## Installation
 
-Install *qprocessing* module into [`g3w-admin`](https://github.com/g3w-suite/g3w-admin/tree/v.3.7.x/g3w-admin) applications folder:
+Install *qps_timeseries* module into [`g3w-admin`](https://github.com/g3w-suite/g3w-admin/tree/v.3.7.x/g3w-admin) applications folder:
 
 ```sh
 # Install module from github (v1.0.0)
@@ -54,4 +54,4 @@ pip3 install ...
 
 ## Sample data
 
-The [qps_timeseries.qgs](media/projects/qps_timeseries.qgs) project is available in the [media](media/) folder (EPSG:4326).
+The [qps_timeseries.qgs](qps_timeseries/tests/data/projects/qps_timeseries.qgs) project is available in the [tests](qps_timeseries/tests/data/) folder (EPSG:4326).

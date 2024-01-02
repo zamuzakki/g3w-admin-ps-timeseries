@@ -40,6 +40,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
 ]
 ```
 
+### Docker
 Refer to [g3w-suite-docker](https://github.com/g3w-suite/g3w-suite-docker) repository for more info about running this on a docker instance.
 
 **NB** On Ubuntu Jammy you could get an `UNKNOWN` package install instead of `g3w-admin-ps-timseries`, you can retry installing it as follows to fix it:
@@ -51,6 +52,7 @@ export DEB_PYTHON_INSTALL_LAYOUT=deb_system
 # And then install again the module
 pip3 install ...
 ```
+Add the above lines to your `scripts/setup.sh` file.
 
 ## Sample data
 

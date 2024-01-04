@@ -1,4 +1,4 @@
-# G3W-ADMIN-QPROCESSING v1.0.0-beta.0
+# G3W-ADMIN-QPROCESSING v1.0.0-beta.1
 
 Porting on G3W-SUITE of QGIS desktop plugin https://plugins.qgis.org/plugins/pstimeseries/
 

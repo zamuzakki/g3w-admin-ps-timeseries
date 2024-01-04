@@ -8,9 +8,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('qdjango', '0115_project_geocoding_providers'),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(

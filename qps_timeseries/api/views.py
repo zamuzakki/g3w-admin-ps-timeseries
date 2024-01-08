@@ -165,7 +165,10 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                 'error_y': {
                     'type': 'data',
                     'symmetric': True,
-                    'array': error_Y
+                    'array': error_Y,
+                    'width': 0,
+                    'thickness': 1,
+                    'color': 'rgba(0,0,0,.5)'
                 }
             })
 

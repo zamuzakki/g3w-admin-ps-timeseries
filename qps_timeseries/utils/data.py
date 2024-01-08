@@ -67,7 +67,7 @@ def get_base_plot_data(qgs_feature, qgs_layer, qps_timeseries_layer=None):
 
     # If std properties is true add std as error_y
     error_y = []
-    if qps_timeseries_layer.std:
+    if qps_timeseries_layer and  qps_timeseries_layer.std:
         std = np.std(np.array(y))
         error_y = [std for p in y]
 

@@ -109,6 +109,7 @@ class QpsTimeseriesLayer(models.Model):
     lin_trend = models.BooleanField('Lin trend', null=False, blank=False, default=False)
     poly_trend = models.BooleanField('Poly trend', null=False, blank=False, default=False)
     detrending = models.BooleanField('Detrending', null=False, blank=False, default=False)
+    std = models.BooleanField('Standard Deviation', null=False, blank=False, default=False)
 
     # Chart axis label
     x_axis_label = models.CharField('X axis label', null=False, blank=False, max_length=255, default='[Date]')

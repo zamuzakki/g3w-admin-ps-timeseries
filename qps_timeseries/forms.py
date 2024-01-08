@@ -175,6 +175,7 @@ class QpsTimeseriesLayerForm(G3WFormMixin, G3WRequestFormMixin, ModelForm):
                                                             Field('lin_trend', css_class='checkbox'),
                                                             Field('poly_trend', css_class='checkbox'),
                                                             Field('detrending', css_class='checkbox'),
+                                                            Field('std', css_class='checkbox'),
                                                             css_class='col-md-6'
                                                         ),
                                                     css_class='row'

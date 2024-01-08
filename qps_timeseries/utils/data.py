@@ -65,10 +65,17 @@ def get_base_plot_data(qgs_feature, qgs_layer, qps_timeseries_layer=None):
     if qps_timeseries_layer and qps_timeseries_layer.detrending:
         y = np.array(y) - np.array(get_line_trend_plot_data(x, y)[1])
 
+    # If std properties is true add std as error_y
+    error_y = []
+    if qps_timeseries_layer.std:
+        std = np.std(np.array(y))
+        error_y = [std for p in y]
+
 
     return {
         'x': x,
         'y': y,
+        'error_y': error_y,
         'fields': infoFields
     }
 

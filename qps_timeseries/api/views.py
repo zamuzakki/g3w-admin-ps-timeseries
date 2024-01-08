@@ -97,6 +97,7 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
 
         X = base_data_plot['x']
         Y = base_data_plot['y']
+        error_Y = base_data_plot['error_y']
 
         try:
             TITLE = (f'{qpst_layer.title_part_1} {qfeature[qpst_layer.title_part_1_field]} '
@@ -156,6 +157,16 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                     },
                 },
             ]
+
+        # STD case
+        if error_Y:
+            data[0].update({
+                'error_y': {
+                    'type': 'data',
+                    'symmetric': True,
+                    'array': error_Y
+                }
+            })
 
         # Add TRACE3 if Lin trend option is enabled
         if qpst_layer.lin_trend:

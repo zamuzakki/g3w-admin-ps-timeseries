@@ -93,7 +93,8 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
 
         ## WebGL optimization
         ## https://plotly.com/javascript/webgl-vs-svg/
-        TYPE = 'scattergl'
+        ## NB: fallbacks to 'scatter' traces when 'error_y' is enabled (probably a plotly@v1.52.2 bug)
+        TYPE = 'scatter' if base_data_plot['error_y'] else 'scattergl'
 
         X = base_data_plot['x']
         Y = base_data_plot['y']

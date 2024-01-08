@@ -93,10 +93,12 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
 
         ## WebGL optimization
         ## https://plotly.com/javascript/webgl-vs-svg/
-        TYPE = 'scattergl'
+        ## NB: fallbacks to 'scatter' traces when 'error_y' is enabled (probably a plotly@v1.52.2 bug)
+        TYPE = 'scatter' if base_data_plot['error_y'] else 'scattergl'
 
         X = base_data_plot['x']
         Y = base_data_plot['y']
+        error_Y = base_data_plot['error_y']
 
         try:
             TITLE = (f'{qpst_layer.title_part_1} {qfeature[qpst_layer.title_part_1_field]} '
@@ -156,6 +158,19 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
                     },
                 },
             ]
+
+        # STD case
+        if error_Y:
+            data[0].update({
+                'error_y': {
+                    'type': 'data',
+                    'symmetric': True,
+                    'array': error_Y,
+                    'width': 0,
+                    'thickness': 1,
+                    'color': 'rgba(0,0,0,.5)'
+                }
+            })
 
         # Add TRACE3 if Lin trend option is enabled
         if qpst_layer.lin_trend:

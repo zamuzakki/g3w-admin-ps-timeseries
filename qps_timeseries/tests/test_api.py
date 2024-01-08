@@ -125,10 +125,12 @@ class TestQpsTimeseriesApi(TestQpsTimeseriesBase):
         jres = json.loads(response.content)
 
         self.assertTrue(jres['result'])
+
         self.assertEqual(len(jres['data'][0]['x']), 357)
         self.assertEqual(len(jres['data'][0]['y']), 357)
         self.assertEqual(len(jres['data'][1]['y']), 0)
         self.assertEqual(len(jres['data'][2]['y']), 0)
+        self.assertFalse('error_y' in jres['data'][0])
 
         self.assertEqual(jres['config'], {'displayModeBar': True, 'editable': False, 'modeBarButtonsToRemove': ['select2d', 'lasso2d', 'resetScale2d'], 'responsive': True, 'scrollZoom': True, 'toImageButtonOptions': {'filename': 'qps-timeseries'}})
 
@@ -172,10 +174,11 @@ class TestQpsTimeseriesApi(TestQpsTimeseriesBase):
             index = jres['data'][0]['y'].index(y)
             self.assertEqual(jres['data'][1]['y'][index], y + 10)
 
-        # Add line trend poly trend
-        # -------------------------
+        # Add line trend poly trend and std
+        # ---------------------------------
         qpsts_layer.lin_trend = True
         qpsts_layer.poly_trend = True
+        qpsts_layer.std = True
 
         qpsts_layer.save()
 
@@ -192,6 +195,10 @@ class TestQpsTimeseriesApi(TestQpsTimeseriesBase):
         self.assertEqual(len(jres['data'][4]['x']), 10)
         self.assertEqual(len(jres['data'][4]['y']), 10)
 
+
+        self.assertEqual(jres['data'][0]['error_y']['type'], 'data')
+        self.assertEqual(jres['data'][0]['error_y']['symmetric'], True)
+        self.assertEqual(len(jres['data'][0]['error_y']['array']), 10)
         # Test config i.e. for layout
         # ---------------------------
 

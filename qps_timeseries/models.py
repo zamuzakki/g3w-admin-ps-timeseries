@@ -81,7 +81,7 @@ GEO_TYPE_VECTOR_LAYER_ALLOWED = [
 class QpsTimeseriesLayer(models.Model):
     """ Layer where to apply qps_timeseries """
 
-    qps_timeseries_project = models.ForeignKey(QpsTimeseriesProject, on_delete=models.CASCADE, unique=True)
+    qps_timeseries_project = models.ForeignKey(QpsTimeseriesProject, on_delete=models.CASCADE)
     layer = models.ForeignKey(Layer, on_delete=models.CASCADE,
                                   help_text=_('Select vector project layers to use for PS Timeseries: '
                                               'only follow geometry types are allowed: ' +

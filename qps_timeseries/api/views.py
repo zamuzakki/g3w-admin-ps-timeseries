@@ -32,7 +32,8 @@ from qgis.PyQt.QtCore import (
 )
 from .permissions import (
     GetLayerInfoPermission,
-    PlotDataPermission
+    PlotDataPermission,
+    GetProjectPermission
 )
 
 
@@ -258,3 +259,25 @@ class QpsTimeseriesPlotDataApiView(G3WAPIView):
         })
 
         return Response(self.results.results)
+
+
+class QpsTimeseriesGetProjectApiView(G3WAPIView):
+    """
+    API for get information about PS Timeseries Project
+    """
+
+    permission_classes = (
+        GetLayerInfoPermission,
+    )
+
+    def get(self, request, *args, **kwargs):
+        try:
+            qps_ts_project = QpsTimeseriesProject.objects.get(project__title=kwargs['project_title'])
+        except ObjectDoesNotExist as e:
+            raise APIException('QpsTimeseriesProject object not found into DB')
+
+        results = {
+            "id": qps_ts_project.id
+        }
+
+        return Response(results)

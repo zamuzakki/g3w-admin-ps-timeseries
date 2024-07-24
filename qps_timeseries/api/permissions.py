@@ -58,3 +58,20 @@ class PlotDataPermission(BasePermission):
         except Exception as e:
             logger.debug(f'[QPS_TIMESERIES] - PlotDataPermission: {e}')
             return False
+
+
+class GetProjectPermission(BasePermission):
+    """ Check permission for plot data """
+
+    def has_permission(self, request, view):
+
+        try:
+
+            # In this way is checked ifa qps_tmiserise project is active
+            qpsts = QpsTimeseriesProject.objects.get(project__title=view.kwargs['project_title'])
+
+            return request.user.has_perm('qdjango.view_project', qpsts.project)
+
+        except Exception as e:
+            logger.debug(f'[QPS_TIMESERIES] - PlotDataPermission: {e}')
+            return False
